@@ -44,9 +44,7 @@ void M_view::mousePressEvent(QMouseEvent *event)
                 case Components::resistor:
                 {
                     Resistor* restmp = new Resistor;
-                    restmp->setPos(event->pos().x()-40,event->pos().y()-40);
-                    //restmp->removeEventFilter(this);
-                    //restmp->setFiltersChildEvents(true);
+                    restmp->setPos(event->pos().x()-40,event->pos().y()-20);
                     this->scene()->addItem(restmp);
                     break;
                 }
