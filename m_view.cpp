@@ -1,13 +1,12 @@
 #include "m_view.h"
+#include "Components/resistor.h"
+#include <QDebug>
 
 
 M_view::M_view(QWidget *parent):QGraphicsView(parent)
 {
     //this->setContextMenuPolicy(Qt::ActionsContextMenu	);
-    this->viewport()->setFocusProxy(nullptr);
-    this->setFocusProxy(nullptr);
-    this->viewport()->installEventFilter(nullptr);
-    this->installEventFilter(nullptr);
+
 }
 
 M_view::~M_view()
@@ -15,42 +14,66 @@ M_view::~M_view()
 
 }
 
+
 void M_view::received_options(QGraphicsItem *, QAction *)
 {
 
 }
 
-void M_view::contextMenuEvent(QContextMenuEvent *event)
+/* void M_view::contextMenuEvent(QContextMenuEvent *event)
 {
-    QPointF p=event->pos();
-       QGraphicsItem* item=itemAt(p.x(),p.y());
-       if (item != nullptr)
-       {
-           qDebug("yes");
-          /* QMenu menu(this);
 
-           QMenu* submenuA = menu.addMenu( "rotate" );
-           QAction * rot90 =submenuA->addAction("90");
-           QAction * rot180 = submenuA->addAction("180");
-
-           QAction * prop = menu.addAction("properties");
+    QGraphicsView::contextMenuEvent(event);
+}
+*/
 
 
-           connect(prop, &QAction::triggered, [](){
-                qDebug("rot90");
+void M_view::mousePressEvent(QMouseEvent *event)
+{
 
-               // emit rotate_sig(90);
-           });
-          // connect(prop, SIGNAL(triggered()), item , SLOT(addRemoveGraph()));
-
-           menu.exec(event->globalPos());/*/
-       }
-       else {
-            QGraphicsView::contextMenuEvent(event);
-       }
+    if(event->button() == Qt::LeftButton)
+    {
+        if(itemAt(event->pos()))
+        {
+            //this->setCursor(Qt::ClosedHandCursor);
+        }
+        else
+        {
+            switch (this->comp)
+            {
+                case Components::resistor:
+                {
+                    Resistor* restmp = new Resistor;
+                    restmp->setPos(event->pos().x()-40,event->pos().y()-40);
+                    //restmp->removeEventFilter(this);
+                    //restmp->setFiltersChildEvents(true);
+                    this->scene()->addItem(restmp);
+                    break;
+                }
+                case Components::capacitor:
+                {
+                    Capacitor* captmp = new Capacitor;
+                    captmp->setPos(event->pos().x()-40,event->pos().y()-20);
+                    this->scene()->addItem(captmp);
+                    break;
+                }
+                case Components::diode:
+                    break;
+                case Components::inductor:
+                    break;
+            default: break;
+            }
+        }
+    }
+    QGraphicsView::mousePressEvent(event);
 }
 
-void M_view::do_stuff()
+void M_view:: resistor_received()
 {
-    emit rotate_sig(90);
-}/**/
+    this->comp = Components::resistor;
+}
+
+void M_view::capacitor_received()
+{
+    this->comp = Components::capacitor;
+}

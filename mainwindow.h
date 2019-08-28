@@ -11,16 +11,14 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
-    QString input = "";
 public:
     m_button* but = new m_button;
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-
 private:
     Ui::MainWindow *ui;
+    QString input = "";
 
 public slots:
 void slot1(QString text );

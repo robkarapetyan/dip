@@ -4,37 +4,31 @@
 #include <QGraphicsSceneContextMenuEvent>
 
 
-Resistor::Resistor(QGraphicsObject *parent)
+Resistor::Resistor(QGraphicsObject * parent): Component(parent)
 {
+    this->setObjectName("resistor");
 
-    Pin * pin1 = new Pin;
-    Pin * pin2 = new Pin;
     this->setAcceptHoverEvents(true);
     this->setFlag(ItemIsMovable);
 
-
     this->setFiltersChildEvents(false);
-    this->pic.setPixmap(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/resh.ico"));
+    this->pic->setPixmap(QPixmap("/home/rob/Public/icons/resh.ico"));
 
-    this->pic.setFlag(ItemIsMovable);
-    this->pic.setAcceptHoverEvents(true);
-    this->pic.setParentItem(this);
+    //this->pic->setFlag(ItemIsMovable);
+    //this->pic->setAcceptHoverEvents(true);
+    //this->pic->setParentItem(this);
 
-    pin1->setParentItem(&this->pic);
-    pin2->setParentItem(&this->pic);
-    pin1->setRect(23,10,5,5);
-    pin2->setRect(-3,10,5,5);
-    pin1->setBrush(QBrush(Qt::black));
-    pin2->setBrush(QBrush(Qt::black));
+    this->add_pin(QRectF(23,10,6,6));
+    this->add_pin(QRectF(-3,10,6,6));
 
-    this->vec_of_pins.push_back(pin1);
-    this->vec_of_pins.push_back(pin2);
+    //this->vec_of_pins.push_back(pin1);
+    //this->vec_of_pins.push_back(pin2);
 }
 
 Resistor::~Resistor()
 {}
 
-void Resistor::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+/*void Resistor::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
     menu.addAction(". . .");
@@ -42,9 +36,14 @@ void Resistor::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
     menu.exec();
     Component::contextMenuEvent(event);
+}*/
+
+void Resistor::rotate90()
+{
+    this->pic->setRotation(90);
 }
 
-void Resistor::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Resistor::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {}
 
 
@@ -52,4 +51,6 @@ QRectF Resistor::boundingRect() const
 {
     return QRectF();
 }
+
+
 

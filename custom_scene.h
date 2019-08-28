@@ -20,7 +20,7 @@ public slots:
 private:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    //void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 };
 
 #endif // CUSTOM_SCENE_H

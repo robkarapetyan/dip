@@ -11,7 +11,8 @@ public:
      M_pixmap(QGraphicsPixmapItem * parent = nullptr);
     ~M_pixmap() override;
 
-    //void contextMenuEvent(QGraphicsSceneContextMenuEvent *) override ;
+
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *) override ;
 
 };
 #endif // M_PIXMAP_H

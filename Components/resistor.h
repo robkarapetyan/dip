@@ -2,34 +2,23 @@
 #define RESISTOR_H
 
 #include <QGraphicsItem>
-
-#include "Components/component.h"
+#include "Components/tools/component.h"
 
 class Resistor: public Component
 {
-private:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
 public:
+    int resistance = 0;
     explicit Resistor(QGraphicsObject *parent = nullptr);
    ~Resistor() override;
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
-
-
-};
-
-/*class Resistor: public QGraphicsItem
-{
-private:
-    Pin * pin1 = new Pin;
-    Pin * pin2 = new Pin;
-    M_pixmap * pic = new M_pixmap;
-public:
-    explicit Resistor(QGraphicsItem *parent = nullptr);
-   ~Resistor() override;
-
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
+private:
 
-};*/
+    //void setRotation(QReal rot);
+    //void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+    //void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+public slots:
+    void rotate90();
+
+};
 #endif // RESISTOR_H

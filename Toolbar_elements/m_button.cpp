@@ -1,11 +1,8 @@
 #include "m_button.h"
 
-
-
 m_button::m_button()
 {
     QWidgetAction * qwdact = new QWidgetAction(this);
-
 
     line->setPlaceholderText("Search");
     qwdact->setDefaultWidget(line);
@@ -13,7 +10,6 @@ m_button::m_button()
     m_menu->setGeometry(0,0,10,10);
 
     this->setMenu(m_menu);
-
 }
 
 QMenu *m_button::Actions()

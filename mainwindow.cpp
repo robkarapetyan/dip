@@ -5,9 +5,9 @@
 #include <QLineEdit>
 #include <QStringRef>
 #include "Components/resistor.h"
-#include "Components/component.h"
-
-
+#include "Components/tools/component.h"
+#include "Components/capacitor.h"
+#include "custom_scene.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,20 +16,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("test");
 
-    QGraphicsScene* scene = new QGraphicsScene;
+    Custom_scene* scene = new Custom_scene;
     QBrush brush(Qt::white);
     QRectF rec(0,0,700,500);
-
 
 
     scene->setSceneRect(rec);
     scene->setBackgroundBrush(brush);
 
     Resistor * res = new Resistor;
-    res->rotate(90);
+    //res->rotate(90);
+
+
+
     scene->addItem(res);
 
+    Capacitor * cap = new Capacitor;
+    cap->setPos(300,300);
 
+    ui->graphicsView->vec_of_components_p.push_back(cap);
 
     ui->graphicsView->setScene(scene);
 
@@ -43,6 +48,35 @@ MainWindow::MainWindow(QWidget *parent) :
     but->add_action("Capacitarer");
     but->add_action("Stabilitrone");
 
+    foreach (QAction *action, but->m_menu->actions())
+    {
+            if (!action->isSeparator() && !action->isWidgetType() &&  action != but->m_menu->actions().at(0) )
+            {
+                if(action->text() == "Resistor")
+                {
+                    connect(action, SIGNAL(triggered()), ui->graphicsView,SLOT( resistor_received()));
+
+                }
+                else if(action->text() == "Capacitor")
+                {
+                    connect(action, SIGNAL(triggered()), ui->graphicsView,SLOT( capacitor_received()));
+
+                   //ui->graphicsView->comp = Components::capacitor;
+                }
+                else if(action->text() == "Inductor")
+                {
+
+                   //ui->graphicsView->comp = Components::inductor;
+                }
+                else if(action->text() == "Diode")
+                {
+                   //ui->graphicsView->comp = Components::diode;
+                }
+                else {
+                   // ui->graphicsView->comp = Components::none;
+                }
+            }
+     }
 
 
     QObject::connect(but->line,SIGNAL(textChanged(QString)),this,SLOT(slot1(QString)));
@@ -76,6 +110,5 @@ void MainWindow::slot1(QString  text )
 
             }
      }
-
    // qDebug("%s",qUtf8Printable(text));
 }

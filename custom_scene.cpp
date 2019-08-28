@@ -1,7 +1,7 @@
 #include "custom_scene.h"
 #include "Components/resistor.h"
 #include "Components/capacitor.h"
-#include "Components/component.h"
+#include "Components/tools/component.h"
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
@@ -27,17 +27,13 @@ void Custom_scene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         QList<QGraphicsItem *>  a = this->items(); // trying to access items this way,works >> causes type loss
         qDebug("%d", a.size());
-            foreach(QGraphicsItem * item,a)
-            {
-            }
+
 }
     QGraphicsScene::mousePressEvent(event);
 }
 
-void Custom_scene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+/*void Custom_scene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-
-QPointF p=event->screenPos();
     QGraphicsItem* item = this->itemAt(event->scenePos().rx(),event->scenePos().ry(),QTransform());
     if (item)
     {
@@ -46,53 +42,36 @@ QPointF p=event->screenPos();
             QAction * act2 =  menu->addAction("properties");
             menu->exec(event->screenPos());
 
-         if (qgraphicsitem_cast<Resistor *>(item) && !qgraphicsitem_cast<QGraphicsRectItem *>(item))
+         if (qgraphicsitem_cast<Resistor *>(item) )
          {
              Resistor* res = qgraphicsitem_cast<Resistor *>(item);
 
-             connect(act1, &QAction::triggered,menu, [act2,res](){
+             connect(act1, &QAction::triggered,this, [res](){
 
-                 act2->setEnabled(false);
-
-                 //not working also
-                 /*
-                 QTransform txf = QTransform();
-                 qreal a = 0;
-                 a = res->rotation() + 90;
-                 txf.translate((12+12),(0));
-                 txf.rotate(a, Qt::ZAxis);
-                 txf.translate(0,0);
-                 res->setTransform(txf, true);*/
-
-             });
-
-             connect(act2, &QAction::triggered,menu, [act1](){
-                 act1->setEnabled(false);
-             });
-
-              if(act1->isEnabled())
-              {
-                  QTransform txf = QTransform();
-                  qreal a = 0;
-                  a = res->rotation() + 90;
-                  txf.translate((12+12),(0));
-                  txf.rotate(a, Qt::ZAxis);
-                  txf.translate(0,0);
-                  res->setTransform(txf, true);
-              }
-
-              if(act2->isEnabled())
-              {
-
-               bool ok;
-                 int i = QInputDialog::getInt(menu, tr("Set Resistance"),
-                                                              tr("resistance"), QLineEdit::Normal,
-                                                              0,2000000,1, &ok);
-                 if (ok)
                  {
-                     res->resistance = i; // i - result taken from inputdialog
+                     QTransform txf = QTransform();
+                     qreal a = res->rotation() + 90;
+                     txf.translate((12+12),(0));
+                     txf.rotate(a, Qt::ZAxis);
+                     txf.translate(0,0);
+                     res->setTransform(txf, true);
                  }
-              }
+             });
+             connect(act2, &QAction::triggered,this, [act1,act2,menu,res](){
+                 act1->setEnabled(false);
+                 act2->setEnabled(true);
+                 if(act2->isEnabled())
+                 {
+                  bool ok;
+                    int i = QInputDialog::getInt(menu, tr("Set Resistance"),
+                                                                 tr("resistance"), QLineEdit::Normal,
+                                                                 0,2000000,1, &ok);
+                    if (ok)
+                    {
+                        res->resistance = i; // i - result taken from inputdialog
+                    }
+                 }
+             });
         }
     }
     else {
@@ -104,3 +83,4 @@ QPointF p=event->screenPos();
         QGraphicsScene::contextMenuEvent(event);
     }
 }
+*/

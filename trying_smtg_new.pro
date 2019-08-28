@@ -25,21 +25,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        Components/component.cpp \
+        Components/capacitor.cpp \
         Components/tools/m_pixmap.cpp \
-        Components/tools/pin.cpp\
+        Components/tools/component.cpp \
         Components/resistor.cpp \
         Toolbar_elements/m_button.cpp \
+        custom_scene.cpp \
         m_view.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
-        Components/component.h \
+        Components/capacitor.h \
+        Components/tools/component.h \
         Components/tools/m_pixmap.h \
-        Components/tools/pin.h\
         Components/resistor.h \
         Toolbar_elements/m_button.h \
+        custom_scene.h \
         m_button.h \
         m_view.h \
         mainwindow.h
@@ -53,4 +55,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    icons/caph.png \
+    icons/capv.png \
+    icons/dioh.png \
+    icons/diov.png \
+    icons/resh.ico \
+    icons/resh.png \
+    icons/resv.ico \
+    icons/resv.png \
     resistor.jpg
