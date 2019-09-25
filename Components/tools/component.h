@@ -47,7 +47,7 @@ public:
 public slots:
     void rotate(int angle);
 signals:
-    void pin_hover_signal(const QPoint &){}
+    void pin_hover_signal(const QPointF &){}
 
 protected:
     QVector<Pin *> vec_of_pins = {};

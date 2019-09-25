@@ -3,6 +3,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QInputDialog>
+#include <QDebug>
 
 Component::Component(QGraphicsObject *parent) : QGraphicsObject(parent)
 {
@@ -66,30 +67,25 @@ void Component::Pin::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
     //QGraphicsRectItem::contextMenuEvent(event);
 }
 
-void Component::Pin::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void Component::Pin::mousePressEvent(QGraphicsSceneMouseEvent *event)//pin clicked
 {
-    qDebug("pin click");
     if(event->button() == Qt::LeftButton)
     {
-        emit this->parentptr->pin_hover_signal(event->screenPos());
+        emit this->parentptr->pin_hover_signal(event->pos());
+        qDebug() << QString("%1").arg(event->scenePos().x());
     }
-    else {
 
-    }
     QGraphicsRectItem::mousePressEvent(event);
 }
 
 void Component::Pin::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    qDebug("pin hovered");
-
     this->setBrush(QBrush(Qt::red));
     QGraphicsRectItem::hoverEnterEvent(event);
 }
 
 void Component::Pin::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    qDebug("pin unhovered");
     this->setBrush(QBrush(Qt::black));
     QGraphicsRectItem::hoverLeaveEvent(event);
 }

@@ -16,11 +16,12 @@ class M_view : public QGraphicsView
 Q_OBJECT
 public:
     explicit M_view(QWidget *parent = nullptr);
-    ~M_view();
+    ~M_view() override;
 
-    //void contextMenuEvent(QContextMenuEvent *event);
-    void mousePressEvent(QMouseEvent* event);
-
+    void wheelEvent(QWheelEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
     Components comp = Components::none;
     std::vector<Component*> vec_of_components_p = {};
 signals:
@@ -31,5 +32,7 @@ public slots:
     void resistor_received();
     void capacitor_received();
     void received_options(QGraphicsItem *,QAction *);
+private:
+    qreal m_scaling = 1;
 };
 #endif // M_VIEW_H

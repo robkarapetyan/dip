@@ -16,27 +16,53 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("test");
 
-    Custom_scene* scene = new Custom_scene;
+    QGraphicsScene* scene = new QGraphicsScene(this);
+    //Custom_scene* scene = new Custom_scene(ui->graphicsView);
     QBrush brush(Qt::white);
     QRectF rec(0,0,700,500);
 
 
-    scene->setSceneRect(rec);
+    //scene->setSceneRect(rec);
     scene->setBackgroundBrush(brush);
+    //scene->setSceneRect(0,0,200,200);
+
 
     Resistor * res = new Resistor;
     //res->rotate(90);
-
+    res->setPos(0,0);
 
 
     scene->addItem(res);
 
     Capacitor * cap = new Capacitor;
-    cap->setPos(300,300);
+    cap->setPos(550,600);
+    scene->addItem(cap);
 
-    ui->graphicsView->vec_of_components_p.push_back(cap);
+    //ui->graphicsView->vec_of_components_p.push_back(cap);
 
     ui->graphicsView->setScene(scene);
+    //ui->graphicsView->setFrameShape(QGraphicsView::NoFrame);
+    //ui->graphicsView->adjustSize();
+    //ui->graphicsView->setContentsMargins(0,0,100,110);
+    //scene->setForegroundBrush(QBrush(Qt::gray));
+    //ui->graphicsView->setFixedSize(700, 800);
+    //ui->graphicsView->scene()->setSceneRect(0, 0, 100, 200);
+
+    //restmp->setPos(this->mapToScene(this->viewport()->rect().x(), this->viewport()->rect().y())
+    //scene->setSceneRect(ui->graphicsView->viewport()->rect().x(), ui->graphicsView->viewport()->rect().y(),100,100);
+    scene->setMinimumRenderSize(0.5);
+
+    //ui->graphicsView->centerOn(0,0);
+
+    //qDebug(" xz %i" ,ui->graphicsView->mapToScene(ui->graphicsView->viewport()->geometry()).boundingRect());
+
+    //ui->graphicsView->mapFromScene(scene->itemsBoundingRect());
+
+    //ui->graphicsView->viewport()->show();
+    //ui->graphicsView->mapFrom(this,QPoint(0,0));
+
+    //ui->graphicsView->mapToScene(QPoint(0,0));
+    //ui->graphicsView->setBackgroundBrush(QBrush(Qt::black));
 
     but->setText("Elements");
     but->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/resh.ico"),"Resistor");
