@@ -4,10 +4,11 @@
 #include <QGraphicsPixmapItem>
 #include <QLineEdit>
 #include <QStringRef>
+#include <QSpinBox>
 #include "Components/resistor.h"
 #include "Components/tools/component.h"
 #include "Components/capacitor.h"
-#include "custom_scene.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,12 +16,24 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("test");
+    connect(ui->graphicsView, SIGNAL(scaling_sig(int)), ui->spinBox,SLOT( setValue(int)));
+    connect(ui->spinBox, SIGNAL(valueChanged(int)), ui->graphicsView,SLOT( change_scale(int)));
+
+    //connect(this->ui->spinBox, SIGNAL(valueChanged(int)), ui->graphicsView, SLOT( ))
+    ui->spinBox->setSuffix("%");
+    ui->spinBox->setRange(40, 160);
+    ui->spinBox->setValue(100);
+    ui->spinBox->setSingleStep(10);
+
+    ui->spinBox->setCorrectionMode(QSpinBox::CorrectionMode(QAbstractSpinBox::CorrectToNearestValue));
 
     QGraphicsScene* scene = new QGraphicsScene(this);
     //Custom_scene* scene = new Custom_scene(ui->graphicsView);
     QBrush brush(Qt::white);
-    QRectF rec(0,0,700,500);
-
+    QGraphicsRectItem* rct = new QGraphicsRectItem(0,0,750,505);
+    rct->hide();
+    scene->addItem(rct);
+    //scene->set
 
     //scene->setSceneRect(rec);
     scene->setBackgroundBrush(brush);
@@ -32,12 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     res->setPos(0,0);
 
 
-    scene->addItem(res);
-
-    Capacitor * cap = new Capacitor;
-    cap->setPos(550,600);
-    scene->addItem(cap);
-
+    //scene->addItem(res);
     //ui->graphicsView->vec_of_components_p.push_back(cap);
 
     ui->graphicsView->setScene(scene);
@@ -87,19 +95,19 @@ MainWindow::MainWindow(QWidget *parent) :
                 {
                     connect(action, SIGNAL(triggered()), ui->graphicsView,SLOT( capacitor_received()));
 
-                   //ui->graphicsView->comp = Components::capacitor;
+                   // switching state of (graphicsView->comp) to (Components::capacitor)
                 }
                 else if(action->text() == "Inductor")
                 {
 
-                   //ui->graphicsView->comp = Components::inductor;
+                   // switching state of (graphicsView->comp) to (Components::inductor);
                 }
                 else if(action->text() == "Diode")
                 {
-                   //ui->graphicsView->comp = Components::diode;
+                   // switching state of (graphicsView->comp) to (Components::diode);
                 }
                 else {
-                   // ui->graphicsView->comp = Components::none;
+                   // switching state of (graphicsView->comp) to (Components::none);
                 }
             }
      }

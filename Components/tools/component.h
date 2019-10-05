@@ -9,21 +9,22 @@
 //#include "Components/tools/pin.h"
 //#include "Components/tools/m_pixmap.h"
 
+class Pin : public QGraphicsRectItem
+{
+    friend class Component;
+    Component* parentptr = nullptr;
+public:
+    explicit Pin(Component* ptr = nullptr);
+    ~Pin();
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent * event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event);
+    void setParent(Component* parent);
+};
+
 class Component: public QGraphicsObject
 {
-    //-------------------Pin-----------------
-    class Pin : public QGraphicsRectItem
-    {
-        Component* parentptr = nullptr;
-    public:
-        explicit Pin(Component* ptr = nullptr);
-        ~Pin();
-        void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
-        void mousePressEvent(QGraphicsSceneMouseEvent *event);
-        void hoverEnterEvent(QGraphicsSceneHoverEvent * event);
-        void hoverLeaveEvent(QGraphicsSceneHoverEvent * event);
-        void setParent(Component* parent);
-    };
     //------------------Pixmap---------------
     class M_pixmap : public QGraphicsPixmapItem
     {
@@ -35,7 +36,6 @@ class Component: public QGraphicsObject
         void setParent(Component* parent);
     };
 
-
     int value = 0;
 public:
     explicit Component(QGraphicsObject * parent = nullptr);
@@ -44,6 +44,7 @@ public:
     void add_pin(const QRectF &rect);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
+
 public slots:
     void rotate(int angle);
 signals:

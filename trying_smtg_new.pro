@@ -29,7 +29,8 @@ SOURCES += \
         Components/tools/component.cpp \
         Components/resistor.cpp \
         Toolbar_elements/m_button.cpp \
-        custom_scene.cpp \
+        common_files/m_spinbox.cpp \
+        common_files/paths.cpp \
         m_view.cpp \
         main.cpp \
         mainwindow.cpp
@@ -39,7 +40,8 @@ HEADERS += \
         Components/tools/component.h \
         Components/resistor.h \
         Toolbar_elements/m_button.h \
-        custom_scene.h \
+        common_files/m_spinbox.h \
+        common_files/paths.h \
         m_view.h \
         mainwindow.h
 

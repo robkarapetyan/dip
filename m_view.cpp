@@ -13,53 +13,61 @@ M_view::~M_view()
 
 }
 
+//------------------------------- mouse events ---------------
+
+
 void M_view::wheelEvent(QWheelEvent *event)
 {
     if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ControlModifier))
     {
+        this->centerOn(mapToScene(event->pos()));
 
-        if(event->delta() >= 0)
-        {
-           this->centerOn(event->posF());
-           if(m_scaling <= 1.6){
-                qDebug() << QString("%1").arg(m_scaling);
-               //qDebug("%i", m_scaling);
-               m_scaling = m_scaling + 0.1;
-               this->scale(1.1,1.1);
+        qDebug() << m_scaling;
+
+        if(event->delta() >= 0){
+           if(m_scaling <= 140){
+               emit scaling_sig(m_scaling + 10);
            }
         }
-        else
-        {
-            this->centerOn(event->posF());
-            if(m_scaling >= 0.5){
-                qDebug() << QString("%1").arg(m_scaling);
-                //qDebug("%i", m_scaling);
-                m_scaling = m_scaling - 0.1;
-                this->scale(0.91, 0.91);
-            }
-            //this->setSceneRect(this->viewport()->x(),this->viewport()->y(),this->width(), this->scene()->height());
+        else{
+           if(m_scaling >= 60){
+               emit scaling_sig(m_scaling - 10);
+           }
         }
+
     }
-    QGraphicsView::wheelEvent(event);
+    else{
+        QGraphicsView::wheelEvent(event);
+        return;
+    }
+
+
+    /**/
 }
 
-void M_view::received_options(QGraphicsItem *, QAction *)
+void M_view::mouseMoveEvent(QMouseEvent *event)
 {
-
+    QGraphicsView::mouseMoveEvent(event);
 }
 
 void M_view::mousePressEvent(QMouseEvent *event)
 {
 
-    if(event->button() == Qt::LeftButton)
+
+    if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier) && !itemAt(event->pos()))
+    {
+        setDragMode(QGraphicsView::ScrollHandDrag);
+    }
+    else if(event->button() == Qt::LeftButton)
     {
          switch (this->comp)
          {
              case Components::resistor:
              {
                  if(!itemAt(event->pos())){
+                     QPointF pt = mapToScene(event->pos());
                      Resistor* restmp = new Resistor;
-                     restmp->setPos(event->globalX() - 12,event->globalY() - 12);
+                     restmp->setPos(pt.x() - 12,pt.y() - 12);
                      this->scene()->addItem(restmp);
                  }
                  break;
@@ -67,8 +75,9 @@ void M_view::mousePressEvent(QMouseEvent *event)
               case Components::capacitor:
               {
                   if(!itemAt(event->pos())){
+                      QPointF pt = mapToScene(event->pos());
                       Capacitor* captmp = new Capacitor;
-                      captmp->setPos(event->pos().x() - 12,event->pos().y() - 12);
+                      captmp->setPos(pt.x() - 12,pt.y() - 12);
                       this->scene()->addItem(captmp);
                   }
                   break;
@@ -80,14 +89,6 @@ void M_view::mousePressEvent(QMouseEvent *event)
               default: break;
          }
     }
-
-
-    //if(event->button() == Qt::MiddleButton){
-        if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier) && !itemAt(event->pos()))
-        {
-            setDragMode(QGraphicsView::ScrollHandDrag);
-        }
-    //}
     QGraphicsView::mousePressEvent(event);
 }
 
@@ -99,13 +100,22 @@ void M_view::mouseReleaseEvent(QMouseEvent *event)
 
 void M_view::resizeEvent(QResizeEvent *event)
 {
-    if(scene()->width() < this->rect().width()){
-        this->setSceneRect(0, 0, this->rect().width() - 5, this->rect().height() - 7);
-    }else{
 
-        this->setSceneRect(0,0,this->scene()->width(), this->scene()->height());
-    }
     QGraphicsView::resizeEvent(event);
+}
+
+//-------------------------------- slots ----------------------
+
+void M_view::change_scale(int new_val)
+{
+    if(new_val > m_scaling){
+        m_scaling += 10;
+        this->scale(1.1,1.1);
+    }
+    else{
+        m_scaling -= 10;
+        this->scale(0.91, 0.91);
+    }
 }
 
 void M_view:: resistor_received()

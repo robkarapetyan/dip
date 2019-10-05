@@ -51,23 +51,23 @@ QRectF Component::boundingRect() const
 
 //--------------------------- PIN ----------------------------------
 
-Component::Pin::Pin(Component* parent){
+Pin::Pin(Component* parent){
 
     this->setParent(parent);
     this->setAcceptHoverEvents(true);
 }
 
-Component::Pin::~Pin()
+Pin::~Pin()
 {
 
 }
 
-void Component::Pin::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
+void Pin::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
 {
     //QGraphicsRectItem::contextMenuEvent(event);
 }
 
-void Component::Pin::mousePressEvent(QGraphicsSceneMouseEvent *event)//pin clicked
+void Pin::mousePressEvent(QGraphicsSceneMouseEvent *event)//pin clicked
 {
     if(event->button() == Qt::LeftButton)
     {
@@ -78,19 +78,19 @@ void Component::Pin::mousePressEvent(QGraphicsSceneMouseEvent *event)//pin click
     QGraphicsRectItem::mousePressEvent(event);
 }
 
-void Component::Pin::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void Pin::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     this->setBrush(QBrush(Qt::red));
     QGraphicsRectItem::hoverEnterEvent(event);
 }
 
-void Component::Pin::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void Pin::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     this->setBrush(QBrush(Qt::black));
     QGraphicsRectItem::hoverLeaveEvent(event);
 }
 
-void Component::Pin::setParent(Component *parent)
+void Pin::setParent(Component *parent)
 {
     this->parentptr = parent;
 }

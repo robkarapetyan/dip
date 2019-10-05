@@ -19,20 +19,21 @@ public:
     ~M_view() override;
 
     void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     Components comp = Components::none;
     std::vector<Component*> vec_of_components_p = {};
 signals:
-    void rotate_sig(int angle);
+    void scaling_sig(int new_val);
 
 public slots:
-
+    void change_scale(int new_scale);
     void resistor_received();
     void capacitor_received();
-    void received_options(QGraphicsItem *,QAction *);
 private:
-    qreal m_scaling = 1;
+    int m_scaling = 100;
+    QVector<QPointF> pvec = {};
 };
 #endif // M_VIEW_H
