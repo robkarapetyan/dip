@@ -8,6 +8,7 @@
 
 //#include "Components/tools/pin.h"
 //#include "Components/tools/m_pixmap.h"
+class Component;
 
 class Pin : public QGraphicsRectItem
 {

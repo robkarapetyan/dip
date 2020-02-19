@@ -30,7 +30,6 @@ SOURCES += \
         Components/resistor.cpp \
         Toolbar_elements/m_button.cpp \
         common_files/m_spinbox.cpp \
-        common_files/paths.cpp \
         m_view.cpp \
         main.cpp \
         mainwindow.cpp
@@ -41,7 +40,6 @@ HEADERS += \
         Components/resistor.h \
         Toolbar_elements/m_button.h \
         common_files/m_spinbox.h \
-        common_files/paths.h \
         m_view.h \
         mainwindow.h
 
