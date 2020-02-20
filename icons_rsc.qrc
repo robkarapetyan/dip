@@ -6,5 +6,8 @@
         <file>icons/dioh.png</file>
         <file>icons/diov.png</file>
         <file>icons/resv.ico</file>
+        <file>icons/npn_512_nKz_icon.ico</file>
+        <file>icons/battery2_512_1PP_icon.ico</file>
+        <file>icons/resistor2_512_14q_icon.ico</file>
     </qresource>
 </RCC>

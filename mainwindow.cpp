@@ -5,6 +5,10 @@
 #include <QLineEdit>
 #include <QStringRef>
 #include <QSpinBox>
+#include <QGraphicsSvgItem>
+#include <QFile>
+#include <QDebug>
+#include <QFileDialog>
 #include "Components/resistor.h"
 #include "Components/tools/component.h"
 #include "Components/capacitor.h"
@@ -19,11 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->graphicsView, SIGNAL(scaling_sig(int)), ui->spinBox,SLOT( setValue(int)));
     connect(ui->spinBox, SIGNAL(valueChanged(int)), ui->graphicsView,SLOT( change_scale(int)));
 
-    //connect(this->ui->spinBox, SIGNAL(valueChanged(int)), ui->graphicsView, SLOT( ))
-    ui->spinBox->setSuffix("%");
-    ui->spinBox->setRange(40, 160);
-    ui->spinBox->setValue(100);
-    ui->spinBox->setSingleStep(10);
+
 
     ui->spinBox->setCorrectionMode(QSpinBox::CorrectionMode(QAbstractSpinBox::CorrectToNearestValue));
 
@@ -37,17 +37,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //scene->setSceneRect(rec);
     scene->setBackgroundBrush(brush);
-    //scene->setSceneRect(0,0,200,200);
-
-
-    Resistor * res = new Resistor;
-    //res->rotate(90);
-    res->setPos(0,0);
-
-
-    //scene->addItem(res);
-    //ui->graphicsView->vec_of_components_p.push_back(cap);
-
     ui->graphicsView->setScene(scene);
     //ui->graphicsView->setFrameShape(QGraphicsView::NoFrame);
     //ui->graphicsView->adjustSize();
@@ -58,7 +47,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //restmp->setPos(this->mapToScene(this->viewport()->rect().x(), this->viewport()->rect().y())
     //scene->setSceneRect(ui->graphicsView->viewport()->rect().x(), ui->graphicsView->viewport()->rect().y(),100,100);
-    scene->setMinimumRenderSize(0.5);
+
+    ui->spinBox->setValue(100);  //spinbox value is being set to range's minimum value(40) without tis
 
     //ui->graphicsView->centerOn(0,0);
 
@@ -72,6 +62,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->graphicsView->mapToScene(QPoint(0,0));
     //ui->graphicsView->setBackgroundBrush(QBrush(Qt::black));
 
+
+// button with search bar
     but->setText("Elements");
     but->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/resh.ico"),"Resistor");
     but->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/caph.png"),"Capacitor");
@@ -82,9 +74,9 @@ MainWindow::MainWindow(QWidget *parent) :
     but->add_action("Capacitarer");
     but->add_action("Stabilitrone");
 
-    foreach (QAction *action, but->m_menu->actions())
+    foreach (QAction *action, but->menu()->actions())
     {
-            if (!action->isSeparator() && !action->isWidgetType() &&  action != but->m_menu->actions().at(0) )
+            if (!action->isSeparator() && !action->isWidgetType() &&  action != but->menu()->actions().at(0) )
             {
                 if(action->text() == "Resistor")
                 {
@@ -111,8 +103,6 @@ MainWindow::MainWindow(QWidget *parent) :
                 }
             }
      }
-
-
     QObject::connect(but->line,SIGNAL(textChanged(QString)),this,SLOT(slot1(QString)));
     ui->mainToolBar->addWidget(but);
 }
@@ -124,9 +114,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::slot1(QString  text )
 {
-    foreach (QAction *action, but->m_menu->actions())
+    qDebug("AA");
+    foreach (QAction *action, but->menu()->actions())
     {
-            if (!action->isSeparator() && !action->isWidgetType() &&  action != but->m_menu->actions().at(0) )
+            if (!action->isSeparator() && !action->isWidgetType() &&  action != but->menu()->actions().at(0) )
             {
                 if(text.size() <= action->text())
                 {
@@ -145,4 +136,68 @@ void MainWindow::slot1(QString  text )
             }
      }
    // qDebug("%s",qUtf8Printable(text));
+}
+
+
+//TO DO
+
+//make button text change signal self connected,
+//so mainwindow will not care about it
+
+// if it is possible, button, to handle children signal
+// so it will send to mainwindow what exactly action was triggered
+
+// file operations (SVG_)
+
+//\\\overall design optimisation
+
+//connection manager
+
+
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    QString newPath = QFileDialog::getSaveFileName(this, trUtf8("Save SVG"),
+            current_file, tr("SVG files (*.svg)"));
+
+        if (newPath.isEmpty())
+            return;
+        qDebug() << newPath;
+        qDebug() << current_file;
+        current_file = newPath;
+
+            QSvgGenerator generator;        // Create a file generator object
+        generator.setFileName(current_file);    // We set the path to the file where to save vector graphics
+        generator.setSize(QSize(ui->graphicsView->scene()->width() , ui->graphicsView->scene()->height() ));  // Set the dimensions of the working area of the document in millimeters
+        generator.setViewBox(QRect(0, 0, ui->graphicsView->scene()->width(), ui->graphicsView->scene()->height() )); // Set the work area in the coordinates
+        generator.setTitle(trUtf8("SVG Example"));
+        //generator.setDescription(trUtf8("File created by SVG Example"));
+
+        QPainter painter;
+        painter.begin(&generator);
+        ui->graphicsView->scene()->render(&painter);
+        painter.end();
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+
+    QString newPath = QFileDialog::getOpenFileName(this, trUtf8("Open SVG"),
+                                                        current_file, tr("SVG files (*.svg)"));
+        if (newPath.isEmpty())
+            return;
+     QGraphicsSvgItem *item = new QGraphicsSvgItem(newPath);
+     ui->graphicsView->scene()->addItem(item);
+//         current_file = newPath;
+//        ui->graphicsView->scene()->clear();
+     
+        //ui->graphicsView->scene()->setSceneRect(SvgReader::getSizes( current_file));
+     
+        // To set a graphic scene objects, received them with a method getElements
+
+//        foreach (QGraphicsRectItem *item, SvgReader::getElements( current_file)) {
+//            QGraphicsRectItem *rect = item;
+//            ui->graphicsView->scene()->addItem(rect);
+//        }
 }

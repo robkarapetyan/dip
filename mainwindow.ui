@@ -92,6 +92,8 @@
     <property name="title">
      <string>file</string>
     </property>
+    <addaction name="actionSave"/>
+    <addaction name="actionOpen"/>
    </widget>
    <widget class="QMenu" name="menuffd">
     <property name="title">
@@ -113,7 +115,7 @@
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="movable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="allowedAreas">
     <set>Qt::AllToolBarAreas</set>
@@ -133,6 +135,21 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actioni_co_active"/>
+   <addaction name="actio_nico_passive"/>
+   <addaction name="action_ico_source"/>
   </widget>
   <action name="actiona1k">
    <property name="text">
@@ -154,6 +171,43 @@
     <string>sources</string>
    </property>
   </action>
+  <action name="actioni_co_active">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/npn_512_nKz_icon.ico</normaloff>:/icons/npn_512_nKz_icon.ico</iconset>
+   </property>
+   <property name="text">
+    <string>active</string>
+   </property>
+  </action>
+  <action name="action_ico_source">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/battery2_512_1PP_icon.ico</normaloff>:/icons/battery2_512_1PP_icon.ico</iconset>
+   </property>
+   <property name="text">
+    <string>source</string>
+   </property>
+  </action>
+  <action name="actio_nico_passive">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/resistor2_512_14q_icon.ico</normaloff>:/icons/resistor2_512_14q_icon.ico</iconset>
+   </property>
+   <property name="text">
+    <string>passive</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -168,6 +222,8 @@
    <header>common_files/m_spinbox.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icons_rsc.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -2,6 +2,7 @@
 
 m_button::m_button()
 {
+    qDebug("%d", this->menu());
     QWidgetAction * qwdact = new QWidgetAction(this);
 
     line->setPlaceholderText("Search");
