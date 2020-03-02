@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QFileDialog>
+#include <QDomDocument>
 #include "Components/resistor.h"
 #include "Components/tools/component.h"
 #include "Components/capacitor.h"
@@ -178,6 +179,56 @@ void MainWindow::on_actionSave_triggered()
         painter.begin(&generator);
         ui->graphicsView->scene()->render(&painter);
         painter.end();
+
+        QDomDocument doc;       // document object
+        QFile file(newPath);   // Open your SVG-file
+        doc.setContent(&file);
+
+//parser_section
+        QDomElement svg_tag = doc.elementsByTagName("svg").at(0).toElement();
+//qDebug() << "size is " <<  doc.elementsByTagName("svg").size();
+        QDomElement unparse_ = doc.createElement( "to_unparse" );
+        svg_tag.appendChild(unparse_);
+
+        QDomElement components_section = doc.createElement("components_section");
+        QDomElement connection_manager_section = doc.createElement("cnnection_manager_section");
+
+        unparse_.appendChild(components_section);
+        unparse_.appendChild(connection_manager_section);
+        ui->graphicsView->scene()->update();
+        for (auto i : ui->graphicsView->scene()->items()){
+                if(dynamic_cast<Component*>(i)){
+                   Component* a = dynamic_cast<Component*>(i);
+                   QDomElement component = doc.createElement("component");
+                   component.setAttribute("type", a->objectName());
+                   component.setAttribute( "x", a->scenePos().rx());
+                   component.setAttribute( "y", a->scenePos().ry());
+                   qDebug() << "x is " << a->scenePos().rx() << "y is " << ui->graphicsView->scene()->height() ;
+//                   qDebug() << "x is " << QString("%1").arg(a->scenePos().x());
+                   components_section.appendChild(component);
+                }
+        }
+//        ui->graphicsView->scene()->
+
+
+//            QDomElement resist = doc.createElement("component");
+//            //resist.setPrefix("resistor");
+//            resist.setAttribute( "x", 200 );
+//            resist.setAttribute( "y", 300);
+
+//            resist.setAttribute( "resistance", 100);
+
+
+        QFile outFile(newPath);
+        if( !outFile.open( QIODevice::WriteOnly | QIODevice::Text ) )
+          {
+            qDebug( "Failed to open file for writing." );
+          }
+
+        QTextStream stream( &outFile );
+        stream << doc.toString();
+
+        outFile.close();
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -187,17 +238,66 @@ void MainWindow::on_actionOpen_triggered()
                                                         current_file, tr("SVG files (*.svg)"));
         if (newPath.isEmpty())
             return;
-     QGraphicsSvgItem *item = new QGraphicsSvgItem(newPath);
-     ui->graphicsView->scene()->addItem(item);
-//         current_file = newPath;
-//        ui->graphicsView->scene()->clear();
-     
-        //ui->graphicsView->scene()->setSceneRect(SvgReader::getSizes( current_file));
-     
-        // To set a graphic scene objects, received them with a method getElements
 
-//        foreach (QGraphicsRectItem *item, SvgReader::getElements( current_file)) {
-//            QGraphicsRectItem *rect = item;
-//            ui->graphicsView->scene()->addItem(rect);
+        QDomDocument doc;       // document object
+        QFile file(newPath);   // Open your SVG-file
+        // If it is not opened, or have failed to transmit the contents in QDocDocument
+        if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file))
+            return;
+
+//        QDomNodeList unparse = doc.elementsByTagName("to_unparse");
+//        qDebug("%d", unparse.size());
+//        for (int i = 0; i < unparse.size(); i++){
+//            QDomNode unParse_node = unparse.item(i);
+
 //        }
+
+        QDomElement svg_tag = doc.elementsByTagName("svg").at(0).toElement();
+
+        QList<QString> viewDimention = svg_tag.attribute("viewBox").split(" ");
+        qDebug() <<"new size is " << viewDimention[2].toInt() + 55 << " " << viewDimention[3].toInt() + 55;
+
+        QGraphicsRectItem* rect = new QGraphicsRectItem(0,0,viewDimention[2].toInt(),viewDimention[3].toInt());
+        ui->graphicsView->scene()->clear();
+        ui->graphicsView->scene()->update();
+        QGraphicsScene* newscene = new QGraphicsScene;
+        delete ui->graphicsView->scene();
+        ui->graphicsView->setScene(newscene);
+
+//        rect->setPen(QPen(Qt::white));
+
+
+        ui->graphicsView->scene()->addItem(rect);
+
+        QDomNodeList list_of_components = doc.elementsByTagName("component");
+
+        //ui->graphicsView->scene()->update(0,0, viewDimention[2].toInt(),viewDimention[2].toInt());
+        for (int i = 0;i < list_of_components.size(); ++i){
+            if(list_of_components.at(i).toElement().attribute("type") == "resistor"){
+                Resistor* resist = new Resistor;
+                ui->graphicsView->scene()->addItem(resist);
+                resist->moveBy(list_of_components.at(i).toElement().attribute("x").toDouble(), list_of_components.at(i).toElement().attribute("y").toDouble());
+            }
+            else if(list_of_components.at(i).toElement().attribute("type") == "capacitor"){
+                Capacitor* cap = new Capacitor;
+                ui->graphicsView->scene()->addItem(cap);
+                cap->setPos(list_of_components.at(i).toElement().attribute("x").toDouble(), list_of_components.at(i).toElement().attribute("y").toDouble());
+            }
+        }
+        qDebug() <<"count of components is " << list_of_components.size();
+//      QDomNodeList gList = doc.elementsByTagName("g");
+//      current_file = newPath;
+//      ui->graphicsView->scene()->clear();
+//      ui->graphicsView->scene()->setSceneRect(SvgReader::getSizes( current_file));
+
+//      To set a graphic scene objects, received them with a method getElements
+
+//      foreach (QGraphicsRectItem *item, SvgReader::getElements( current_file)) {
+//          QGraphicsRectItem *rect = item;
+//          ui->graphicsView->scene()->addItem(rect);
+//      }
+        file.close();
+        ui->graphicsView->scene()->removeItem(rect);
+        qDebug() << "open x is " << ui->graphicsView->scene()->width() << "y is " << ui->graphicsView->scene()->height() ;
+
 }

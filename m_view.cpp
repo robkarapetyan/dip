@@ -21,9 +21,7 @@ void M_view::wheelEvent(QWheelEvent *event)
     if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ControlModifier))
     {
         this->centerOn(mapToScene(event->pos()));
-
-        qDebug() << m_scaling;
-
+//        qDebug() << m_scaling;
         if(event->delta() >= 0){
            if(m_scaling <= 140){
                emit scaling_sig(m_scaling + 10);
@@ -40,9 +38,6 @@ void M_view::wheelEvent(QWheelEvent *event)
         QGraphicsView::wheelEvent(event);
         return;
     }
-
-
-    /**/
 }
 
 void M_view::mouseMoveEvent(QMouseEvent *event)
@@ -52,7 +47,8 @@ void M_view::mouseMoveEvent(QMouseEvent *event)
 
 void M_view::mousePressEvent(QMouseEvent *event)
 {
-
+    //this->scene()->clear();
+    qDebug() << scene()->items().size();
 
     if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier) && !itemAt(event->pos()))
     {
@@ -89,6 +85,13 @@ void M_view::mousePressEvent(QMouseEvent *event)
               default: break;
          }
     }
+
+//    qDebug() << this->scene()->items().size();
+//    for (auto i : this->scene()->items()){
+//        if(dynamic_cast<Component*>(i)){
+//            qDebug() << "yes it is component";
+//        }
+//    }
     QGraphicsView::mousePressEvent(event);
 }
 

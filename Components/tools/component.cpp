@@ -49,6 +49,11 @@ QRectF Component::boundingRect() const
     return QRectF();
 }
 
+QPointF Component::scenePos() const
+{
+    return pic->scenePos();
+}
+
 //--------------------------- PIN ----------------------------------
 
 Pin::Pin(Component* parent){

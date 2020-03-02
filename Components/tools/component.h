@@ -42,10 +42,12 @@ public:
     explicit Component(QGraphicsObject * parent = nullptr);
     ~Component() override;
 
+
     void add_pin(const QRectF &rect);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-
+    QString type = "";
+    QPointF scenePos() const;
 public slots:
     void rotate(int angle);
 signals:
