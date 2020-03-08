@@ -2,6 +2,7 @@
 #include <QBrush>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QDebug>
 
 
 Resistor::Resistor(QGraphicsObject * parent): Component(parent)
@@ -9,9 +10,9 @@ Resistor::Resistor(QGraphicsObject * parent): Component(parent)
     this->setObjectName("resistor");
 
     this->setAcceptHoverEvents(true);
-    this->setFlag(ItemIsMovable);
+//    this->setFlag(ItemIsMovable);
 
-    this->setFiltersChildEvents(false);
+//    this->setFiltersChildEvents(false);
     this->pic->setPixmap(QPixmap("://icons/resh.ico"));
 
     //this->pic->setFlag(ItemIsMovable);
@@ -21,6 +22,9 @@ Resistor::Resistor(QGraphicsObject * parent): Component(parent)
     this->add_pin(QRectF(23,10,6,6));
     this->add_pin(QRectF(-3,10,6,6));
 
+//    for( Pin* pn : vec_of_pins){
+//        qDebug() << pn->scenePos();
+//    }
     //this->vec_of_pins.push_back(pin1);
     //this->vec_of_pins.push_back(pin2);
 }
@@ -49,7 +53,7 @@ void Resistor::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 
 QRectF Resistor::boundingRect() const
 {
-    return QRectF();
+    return this->childrenBoundingRect();
 }
 
 

@@ -6,7 +6,7 @@ Capacitor::Capacitor(QGraphicsObject *parent): Component(parent)
     this->setObjectName("capacitor");
 
     this->setAcceptHoverEvents(true);
-    this->setFlag(ItemIsMovable);
+//    this->setFlag(ItemIsMovable);
 
 
     this->setFiltersChildEvents(false);

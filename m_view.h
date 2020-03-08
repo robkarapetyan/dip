@@ -8,8 +8,9 @@
 #include "Components/capacitor.h"
 #include "Components/resistor.h"
 #include "Components/tools/component.h"
+#include "connection_controller.h"
 
-enum class Components{none,resistor,capacitor,inductor,diode};
+enum class ActiveMode{none,resistor,capacitor,inductor,diode,port,plainconnection,curvedconnection};
 
 class M_view : public QGraphicsView
 {
@@ -23,8 +24,11 @@ public:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
-    Components comp = Components::none;
+    ActiveMode mode = ActiveMode::none;
     std::vector<Component*> vec_of_components_p = {};
+    void set_to_(const ActiveMode& a);
+    Connection_controller c_controller;
+
 signals:
     void scaling_sig(int new_val);
 

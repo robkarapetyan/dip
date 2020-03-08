@@ -28,8 +28,10 @@ SOURCES += \
         Components/capacitor.cpp \
         Components/tools/component.cpp \
         Components/resistor.cpp \
+        Components/tools/port.cpp \
         Toolbar_elements/m_button.cpp \
         common_files/m_spinbox.cpp \
+        connection_controller.cpp \
         m_view.cpp \
         main.cpp \
         mainwindow.cpp
@@ -38,8 +40,10 @@ HEADERS += \
         Components/capacitor.h \
         Components/tools/component.h \
         Components/resistor.h \
+        Components/tools/port.h \
         Toolbar_elements/m_button.h \
         common_files/m_spinbox.h \
+        connection_controller.h \
         m_view.h \
         mainwindow.h
 

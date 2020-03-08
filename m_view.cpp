@@ -2,6 +2,9 @@
 #include "Components/resistor.h"
 #include <QDebug>
 #include <QGuiApplication>
+#include "Components/tools/component.h"
+#include "Components/tools/port.h"
+#include "mainwindow.h"
 
 M_view::M_view(QWidget *parent):QGraphicsView(parent)
 {
@@ -47,41 +50,55 @@ void M_view::mouseMoveEvent(QMouseEvent *event)
 
 void M_view::mousePressEvent(QMouseEvent *event)
 {
-    //this->scene()->clear();
-    qDebug() << scene()->items().size();
-
+    auto mainwindowptr = dynamic_cast<MainWindow*>(this->parent()->parent());
     if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier) && !itemAt(event->pos()))
     {
         setDragMode(QGraphicsView::ScrollHandDrag);
     }
     else if(event->button() == Qt::LeftButton)
     {
-         switch (this->comp)
+         switch (this->mode)
          {
-             case Components::resistor:
+             case ActiveMode::resistor:
              {
                  if(!itemAt(event->pos())){
                      QPointF pt = mapToScene(event->pos());
                      Resistor* restmp = new Resistor;
                      restmp->setPos(pt.x() - 12,pt.y() - 12);
                      this->scene()->addItem(restmp);
+                     connect(restmp, SIGNAL(pin_hover_signal(Pin*)), &c_controller, SLOT(receiving_pin(Pin *) ));
                  }
                  break;
               }
-              case Components::capacitor:
+              case ActiveMode::capacitor:
               {
                   if(!itemAt(event->pos())){
                       QPointF pt = mapToScene(event->pos());
                       Capacitor* captmp = new Capacitor;
                       captmp->setPos(pt.x() - 12,pt.y() - 12);
                       this->scene()->addItem(captmp);
+                      connect(captmp, SIGNAL(pin_hover_signal(Pin*)), &c_controller, SLOT(receiving_pin(Pin *) ));
+
                   }
                   break;
               }
-              case Components::diode:
+              case ActiveMode::diode:
                   break;
-              case Components::inductor:
+              case ActiveMode::inductor:
                   break;
+              case ActiveMode::port:
+              {
+                if(!itemAt(event->pos())){
+                    QPointF pt = mapToScene(event->pos());
+                    Port* pintmp = new Port;
+                    pintmp->setrect(pt.x() +2,pt.y() +2, 6, 6);
+                    this->scene()->addItem(pintmp);
+                    connect(pintmp, SIGNAL(pin_hover_signal(Pin*)), &c_controller, SLOT(receiving_pin(Pin *) ));
+
+                }
+                break;
+              }
+
               default: break;
          }
     }
@@ -107,6 +124,11 @@ void M_view::resizeEvent(QResizeEvent *event)
     QGraphicsView::resizeEvent(event);
 }
 
+void M_view::set_to_(const ActiveMode &a)
+{
+    mode = a;
+}
+
 //-------------------------------- slots ----------------------
 
 void M_view::change_scale(int new_val)
@@ -123,10 +145,10 @@ void M_view::change_scale(int new_val)
 
 void M_view:: resistor_received()
 {
-    this->comp = Components::resistor;
+    this->mode = ActiveMode::resistor;
 }
 
 void M_view::capacitor_received()
 {
-    this->comp = Components::capacitor;
+    this->mode = ActiveMode::capacitor;
 }

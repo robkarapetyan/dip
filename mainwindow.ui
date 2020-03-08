@@ -154,6 +154,20 @@
    <addaction name="actio_nico_passive"/>
    <addaction name="action_ico_source"/>
   </widget>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionadd_port"/>
+   <addaction name="actionplain_connection"/>
+   <addaction name="actioncurved_connection"/>
+  </widget>
   <action name="actiona1k">
    <property name="text">
     <string>a1k</string>
@@ -209,6 +223,33 @@
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionadd_port">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/pin.png</normaloff>:/icons/pin.png</iconset>
+   </property>
+   <property name="text">
+    <string>add port</string>
+   </property>
+  </action>
+  <action name="actionplain_connection">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/plainconnect.png</normaloff>:/icons/plainconnect.png</iconset>
+   </property>
+   <property name="text">
+    <string>plain connection</string>
+   </property>
+  </action>
+  <action name="actioncurved_connection">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/conntr.png</normaloff>:/icons/conntr.png</iconset>
+   </property>
+   <property name="text">
+    <string>curved connection</string>
    </property>
   </action>
  </widget>

@@ -9,5 +9,9 @@
         <file>icons/npn_512_nKz_icon.ico</file>
         <file>icons/battery2_512_1PP_icon.ico</file>
         <file>icons/resistor2_512_14q_icon.ico</file>
+        <file>icons/dd.png</file>
+        <file>icons/pin.png</file>
+        <file>icons/conntr.png</file>
+        <file>icons/plainconnect.png</file>
     </qresource>
 </RCC>

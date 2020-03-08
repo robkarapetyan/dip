@@ -4,15 +4,31 @@
 #include <QMenu>
 #include <QInputDialog>
 #include <QDebug>
+#include "port.h"
 
 Component::Component(QGraphicsObject *parent) : QGraphicsObject(parent)
 {
+//    this->installSceneEventFilter(this);
     this->setFlag(ItemIsMovable);
-    this->setFiltersChildEvents(false);
-    this->pic->setFlag(ItemIsMovable);
-    this->pic->setParentItem(this);
-    this->pic->setFiltersChildEvents(true);
 
+//    this->setHandlesChildEvents(true);
+
+    //this->setFlag(ItemIsPanel);
+    //this->setParentItem(this->pic);
+    this->pic->setFlag(ItemIgnoresParentOpacity);
+    //this->setFlag(ItemClipsToShape);
+//    this->setFiltersChildEvents(true);
+//    this->pic->setFlag(ItemIsMovable);
+    this->pic->setParentItem(this);
+    //this->pic->setFiltersChildEvents(true);
+
+//    connect(this, SIGNAL(pin_hover_signal(int)), this, SLOT(test_of_pin_click(int)));
+//    m_text.setParentItem(this->pic);
+//    m_text.setPos(4,-8);
+//    //m_text.setFlag(GraphicsItemFlag::ItemIsMovable);
+//    m_text.setPen(QPen(QColor(Qt::red)));
+//    m_text.setText("0");
+//    m_text.setFont(QFont("arial",8,-1,false));
 }
 
 Component::~Component()
@@ -22,11 +38,10 @@ Component::~Component()
 
 void Component::add_pin(const QRectF &rect)
 {
-    Pin * pin1 = new Pin(this);
+    Pin * pin1 = new Pin;
     pin1->setRect(rect);
-    pin1->setBrush(QBrush(Qt::black));
-    this->vec_of_pins.push_back(pin1);
-    pin1->setParentItem(this->pic);
+    //this->vec_of_pins.push_back(pin1);
+    pin1->setParentItem(this);
 }
 
 /**/
@@ -40,13 +55,24 @@ void Component::rotate(int angle)
     this->setTransform(txf, true);
 }
 
+
+
 void Component::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {}
+
+//void Component::mousePressEvent(QGraphicsSceneMouseEvent *event)
+//{
+//    for( Pin* pn : vec_of_pins){
+//        qDebug() << pn->scenePos();
+//    }
+
+//    qDebug() << this << "scp" << event->scenePos();
+//}
 
 
 QRectF Component::boundingRect() const
 {
-    return QRectF();
+    return this->childrenBoundingRect();
 }
 
 QPointF Component::scenePos() const
@@ -56,10 +82,14 @@ QPointF Component::scenePos() const
 
 //--------------------------- PIN ----------------------------------
 
-Pin::Pin(Component* parent){
 
-    this->setParent(parent);
+Pin::Pin(Component* ){
+    setFlag(ItemIgnoresParentOpacity);
+    setBrush(QBrush(Qt::black));
     this->setAcceptHoverEvents(true);
+//    setFlag(ItemSendsScenePositionChanges);
+
+
 }
 
 Pin::~Pin()
@@ -74,10 +104,23 @@ void Pin::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
 
 void Pin::mousePressEvent(QGraphicsSceneMouseEvent *event)//pin clicked
 {
+//    qDebug() << this->scenePos().x() << " " << this->scenePos().y() << event->scenePos().x();
+    qDebug() << "scene pos : " << this->parentItem()->scenePos();
+//    qDebug() << " pos : " << this->pos();
+    qDebug() << "event scenepos : " << event->scenePos();
+
     if(event->button() == Qt::LeftButton)
     {
-        emit this->parentptr->pin_hover_signal(event->pos());
-        qDebug() << QString("%1").arg(event->scenePos().x());
+        if(dynamic_cast<Component*>(this->parentItem()->parentItem())){
+            Component* a = dynamic_cast<Component*>(this->parentItem()->parentItem());
+            emit a->pin_hover_signal(this);
+            //qDebug() << this->scenePos().x();
+            //qDebug() << "yup";
+        }else if(dynamic_cast<Port*>(this->parentItem())){
+            Port* a = dynamic_cast<Port*>(this->parentItem());
+            emit a->pin_hover_signal(this);
+            //qDebug() << "yupe";
+        }
     }
 
     QGraphicsRectItem::mousePressEvent(event);
@@ -95,16 +138,20 @@ void Pin::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     QGraphicsRectItem::hoverLeaveEvent(event);
 }
 
-void Pin::setParent(Component *parent)
+QVariant Pin::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
-    this->parentptr = parent;
+    if(this->parentItem())
+    this->parentItem()->update(this->parentItem()->boundingRect());
+    return QGraphicsRectItem::itemChange(change,value);
 }
+
+
 
 //---------------------------- Pixmap------------------------------
 
 Component::M_pixmap::M_pixmap(Component *ptr)
 {
-    this->setParent(ptr);
+    //this->setParent(ptr);
 }
 
 Component::M_pixmap::~M_pixmap()
@@ -114,6 +161,9 @@ Component::M_pixmap::~M_pixmap()
 
 void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
+    //this->installSceneEventFilter(this);
+    //this->parentItem()->setPos(this->scenePos());
+    //this->parentItem()->update(this->parentItem()->childrenBoundingRect());
     QMenu * menu = new QMenu;
     QAction * act1 = menu->addAction("rotate");
     QAction * act2 =  menu->addAction("remove");
@@ -131,7 +181,7 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
         this->setTransform(txf, true);
     });
     connect(act2, &QAction::triggered, [this](){
-        this->parentptr->~Component();
+        delete this->parentptr;
     });
     connect(act3, &QAction::triggered, [this,widget](){
 
@@ -143,7 +193,12 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
                                                                  0,2000000,1, &ok);
                     if (ok)
                     {
-                        this->parentptr->value = i;
+                        if(i != 0){
+                            this->parentptr->value = i;
+//                            this->parentptr->m_text.setPen(QPen(QBrush(Qt::BrushStyle::NoBrush),3, Qt::PenStyle::SolidLine, Qt::PenCapStyle::SquareCap, Qt::PenJoinStyle::BevelJoin));
+//                            this->parentptr->m_text.setText(QStringLiteral("%1 Ohm").arg(i));
+                        }
+
                     }
               }
               else if(this->parentptr->objectName() == "capacitor"){
@@ -154,7 +209,11 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
                                                                   0,2000000,1, &ok);
                      if (ok)
                      {
-                       this->parentptr->value = i;
+                         if(i != 0){
+                             this->parentptr->value = i;
+//                             this->parentptr->m_text.setPen(QPen(QPen(QBrush(Qt::BrushStyle::NoBrush),3, Qt::PenStyle::SolidLine, Qt::PenCapStyle::SquareCap, Qt::PenJoinStyle::BevelJoin)));
+//                             this->parentptr->m_text.setText(QStringLiteral("%1 pF").arg(i));
+                         }
                      }
               }
              // i - result taken from inputdialog

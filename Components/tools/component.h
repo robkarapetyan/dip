@@ -13,19 +13,22 @@ class Component;
 class Pin : public QGraphicsRectItem
 {
     friend class Component;
-    Component* parentptr = nullptr;
+    //Component* parentptr = nullptr;
 public:
-    explicit Pin(Component* ptr = nullptr);
+    //Pin() = default;
+    Pin(Component* ptr = nullptr);
     ~Pin();
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent * event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event);
-    void setParent(Component* parent);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent * event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent * event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event) override;
+protected:
+    QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
 };
 
 class Component: public QGraphicsObject
 {
+    Q_OBJECT
     //------------------Pixmap---------------
     class M_pixmap : public QGraphicsPixmapItem
     {
@@ -34,10 +37,12 @@ class Component: public QGraphicsObject
          explicit M_pixmap(Component * ptr = nullptr);
         ~M_pixmap() override;
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *)  override;
+//        void moveevent
         void setParent(Component* parent);
     };
 
     int value = 0;
+    QGraphicsSimpleTextItem m_text;
 public:
     explicit Component(QGraphicsObject * parent = nullptr);
     ~Component() override;
@@ -45,15 +50,21 @@ public:
 
     void add_pin(const QRectF &rect);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+//    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     QRectF boundingRect() const override;
     QString type = "";
     QPointF scenePos() const;
+
+    //test
+    void signal_test(int a);
+
 public slots:
     void rotate(int angle);
 signals:
-    void pin_hover_signal(const QPointF &){}
+    void pin_hover_signal(Pin*);
 
 protected:
+
     QVector<Pin *> vec_of_pins = {};
     M_pixmap * pic = new M_pixmap(this);
 };
