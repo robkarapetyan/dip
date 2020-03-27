@@ -8,7 +8,8 @@
 
 M_view::M_view(QWidget *parent):QGraphicsView(parent)
 {
-
+    conncontroller = new Connection_controller(this);
+    connect(conncontroller, SIGNAL(item_created(QGraphicsItem*)), this, SLOT(add_received_lineItem(QGraphicsItem*)));
 }
 
 M_view::~M_view()
@@ -50,7 +51,7 @@ void M_view::mouseMoveEvent(QMouseEvent *event)
 
 void M_view::mousePressEvent(QMouseEvent *event)
 {
-    auto mainwindowptr = dynamic_cast<MainWindow*>(this->parent()->parent());
+//    auto mainwindowptr = dynamic_cast<MainWindow*>(this->parent()->parent());
     if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier) && !itemAt(event->pos()))
     {
         setDragMode(QGraphicsView::ScrollHandDrag);
@@ -66,7 +67,7 @@ void M_view::mousePressEvent(QMouseEvent *event)
                      Resistor* restmp = new Resistor;
                      restmp->setPos(pt.x() - 12,pt.y() - 12);
                      this->scene()->addItem(restmp);
-                     connect(restmp, SIGNAL(pin_hover_signal(Pin*)), &c_controller, SLOT(receiving_pin(Pin *) ));
+                     connect(restmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
                  }
                  break;
               }
@@ -77,7 +78,7 @@ void M_view::mousePressEvent(QMouseEvent *event)
                       Capacitor* captmp = new Capacitor;
                       captmp->setPos(pt.x() - 12,pt.y() - 12);
                       this->scene()->addItem(captmp);
-                      connect(captmp, SIGNAL(pin_hover_signal(Pin*)), &c_controller, SLOT(receiving_pin(Pin *) ));
+                      connect(captmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
 
                   }
                   break;
@@ -91,9 +92,9 @@ void M_view::mousePressEvent(QMouseEvent *event)
                 if(!itemAt(event->pos())){
                     QPointF pt = mapToScene(event->pos());
                     Port* pintmp = new Port;
-                    pintmp->setrect(pt.x() +2,pt.y() +2, 6, 6);
+                    pintmp->setPos(pt.x() +1,pt.y() +1);
                     this->scene()->addItem(pintmp);
-                    connect(pintmp, SIGNAL(pin_hover_signal(Pin*)), &c_controller, SLOT(receiving_pin(Pin *) ));
+                    connect(pintmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
 
                 }
                 break;
@@ -103,7 +104,7 @@ void M_view::mousePressEvent(QMouseEvent *event)
          }
     }
 
-//    qDebug() << this->scene()->items().size();
+    qDebug() << this->scene()->items().size();
 //    for (auto i : this->scene()->items()){
 //        if(dynamic_cast<Component*>(i)){
 //            qDebug() << "yes it is component";
@@ -127,6 +128,11 @@ void M_view::resizeEvent(QResizeEvent *event)
 void M_view::set_to_(const ActiveMode &a)
 {
     mode = a;
+}
+
+void M_view::add_received_lineItem(QGraphicsItem *a)
+{
+    this->scene()->addItem(a);
 }
 
 //-------------------------------- slots ----------------------

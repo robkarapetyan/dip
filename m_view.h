@@ -8,7 +8,7 @@
 #include "Components/capacitor.h"
 #include "Components/resistor.h"
 #include "Components/tools/component.h"
-#include "connection_controller.h"
+#include "ConnectionController/connection_controller.h"
 
 enum class ActiveMode{none,resistor,capacitor,inductor,diode,port,plainconnection,curvedconnection};
 
@@ -27,17 +27,17 @@ public:
     ActiveMode mode = ActiveMode::none;
     std::vector<Component*> vec_of_components_p = {};
     void set_to_(const ActiveMode& a);
-    Connection_controller c_controller;
+    Connection_controller* conncontroller;
 
 signals:
     void scaling_sig(int new_val);
 
 public slots:
+    void add_received_lineItem(QGraphicsItem*);
     void change_scale(int new_scale);
     void resistor_received();
     void capacitor_received();
 private:
     int m_scaling = 100;
-    QVector<QPointF> pvec = {};
 };
 #endif // M_VIEW_H

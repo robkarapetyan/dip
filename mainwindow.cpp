@@ -8,6 +8,7 @@
 #include <QGraphicsSvgItem>
 #include <QFile>
 #include <QDebug>
+#include <QString>
 #include <QFileDialog>
 #include <QDomDocument>
 #include "Components/resistor.h"
@@ -159,7 +160,7 @@ void MainWindow::slot1(QString  text )
 
 void MainWindow::on_actionSave_triggered()
 {
-    QString newPath = QFileDialog::getSaveFileName(this, trUtf8("Save SVG"),
+    QString newPath = QFileDialog::getSaveFileName(this, "Save SVG",
             current_file, tr("SVG files (*.svg)"));
 
         if (newPath.isEmpty())
@@ -172,7 +173,7 @@ void MainWindow::on_actionSave_triggered()
         generator.setFileName(current_file);    // We set the path to the file where to save vector graphics
         generator.setSize(QSize(ui->graphicsView->scene()->width() , ui->graphicsView->scene()->height() ));  // Set the dimensions of the working area of the document in millimeters
         generator.setViewBox(QRect(0, 0, ui->graphicsView->scene()->width(), ui->graphicsView->scene()->height() )); // Set the work area in the coordinates
-        generator.setTitle(trUtf8("SVG Example"));
+        generator.setTitle("SVG Example");
         //generator.setDescription(trUtf8("File created by SVG Example"));
 
         QPainter painter;
@@ -233,7 +234,7 @@ void MainWindow::on_actionSave_triggered()
 void MainWindow::on_actionOpen_triggered()
 {
 
-    QString newPath = QFileDialog::getOpenFileName(this, trUtf8("Open SVG"),
+    QString newPath = QFileDialog::getOpenFileName(this, "Open SVG",
                                                         current_file, tr("SVG files (*.svg)"));
         if (newPath.isEmpty())
             return;
@@ -281,4 +282,16 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionadd_port_triggered()
 {
     ui->graphicsView->set_to_(ActiveMode(ActiveMode::port));
+}
+
+void MainWindow::on_actionplain_connection_triggered()
+{
+    this->ui->graphicsView->conncontroller->setMode(ConnectionMode::flat);
+    this->ui->graphicsView->set_to_(ActiveMode::none);
+}
+
+void MainWindow::on_actioncurved_connection_triggered()
+{
+    this->ui->graphicsView->conncontroller->setMode(ConnectionMode::polyline);
+    this->ui->graphicsView->set_to_(ActiveMode::none);
 }

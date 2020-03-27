@@ -5,11 +5,14 @@
 Port::Port()
 {
     this->setFlag(ItemIsMovable);
-    this->setFiltersChildEvents(true);
+//    this->setFiltersChildEvents(true);
 //    this->m_pin.setFlag(ItemIsMovable);
     m_pin->setParentItem(this);
 //    m_pin->installSceneEventFilter(this);
-    //m_pin.setRect(0,0,6,6);
+    m_pin->setRect(0,0,6,6);
+    m_pin->moveBy(1,1);
+    this->m_pin->setFlag(ItemIgnoresParentOpacity);
+
 //    this->scenep
 }
 
@@ -39,5 +42,5 @@ QPointF Port::scenePos() const
 
 void Port::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << event->scenePos();
+    QGraphicsObject::mousePressEvent(event);
 }

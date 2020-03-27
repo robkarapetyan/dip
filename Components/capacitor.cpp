@@ -9,7 +9,7 @@ Capacitor::Capacitor(QGraphicsObject *parent): Component(parent)
 //    this->setFlag(ItemIsMovable);
 
 
-    this->setFiltersChildEvents(false);
+//    this->setFiltersChildEvents(false);
     this->pic->setPixmap(QPixmap("://icons/caph.png"));
 
     //this->pic->setFlag(ItemIsMovable);
@@ -17,8 +17,8 @@ Capacitor::Capacitor(QGraphicsObject *parent): Component(parent)
     //this->pic->setParentItem(this);
 
 
-    this->add_pin(QRectF(23,10,6,6));
-    this->add_pin(QRectF(-3,10,6,6));
+    this->add_pin(23,10);
+    this->add_pin(-3,10);
 
 
     //this->vec_of_pins.push_back(pin1);
@@ -42,7 +42,7 @@ void Capacitor::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 
 QRectF Capacitor::boundingRect() const
 {
-    return QRectF();
+    return this->childrenBoundingRect();
 }
 
 

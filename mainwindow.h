@@ -32,6 +32,8 @@ private slots:
 void on_actionSave_triggered();
 void on_actionOpen_triggered();
 void on_actionadd_port_triggered();
+void on_actionplain_connection_triggered();
+void on_actioncurved_connection_triggered();
 };
 
 #endif // MAINWINDOW_H

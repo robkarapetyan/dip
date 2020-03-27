@@ -12,15 +12,14 @@ Resistor::Resistor(QGraphicsObject * parent): Component(parent)
     this->setAcceptHoverEvents(true);
 //    this->setFlag(ItemIsMovable);
 
-//    this->setFiltersChildEvents(false);
     this->pic->setPixmap(QPixmap("://icons/resh.ico"));
 
     //this->pic->setFlag(ItemIsMovable);
     //this->pic->setAcceptHoverEvents(true);
     //this->pic->setParentItem(this);
 
-    this->add_pin(QRectF(23,10,6,6));
-    this->add_pin(QRectF(-3,10,6,6));
+    this->add_pin(23,10);
+    this->add_pin(-3,10);
 
 //    for( Pin* pn : vec_of_pins){
 //        qDebug() << pn->scenePos();
