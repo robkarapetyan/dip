@@ -104,7 +104,7 @@ void M_view::mousePressEvent(QMouseEvent *event)
          }
     }
 
-    qDebug() << this->scene()->items().size();
+//    qDebug() << this->scene()->items().size();
 //    for (auto i : this->scene()->items()){
 //        if(dynamic_cast<Component*>(i)){
 //            qDebug() << "yes it is component";

@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include "Components/tools/component.h"
+#include "ConnectionController/lines/iline.h"
+#include "ConnectionController/lines/flatline.h"
+#include "ConnectionController/lines/ortogonalline.h"
 
 enum class ConnectionMode{ none, flat, polyline};
 
@@ -14,7 +17,6 @@ public:
     ~Connection_controller() override;
 
     void setMode(const ConnectionMode &a);
-//    void setView(QGraphicsView*);
 public slots:
     void receiving_pin(Pin*);
 signals:
@@ -22,7 +24,7 @@ signals:
 private:
     QVector<Pin*> ports = {};
     ConnectionMode mode= ConnectionMode::none;
-//    QGraphicsView* m_view;
+    QVector<ILine*> vec_of_lines = {};
     Pin* pin1 = nullptr;
     Pin* pin2 = nullptr;
 };

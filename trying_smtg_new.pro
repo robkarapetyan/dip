@@ -29,12 +29,15 @@ SOURCES += \
         Components/tools/component.cpp \
         Components/resistor.cpp \
         Components/tools/port.cpp \
-        ConnectionController/flatline.cpp \
-        ConnectionController/linenode.cpp \
-        ConnectionController/singlelineitem.cpp \
+        ConnectionController/lineitems/flatlineitem.cpp \
+        ConnectionController/lineitems/ortogonallineitem.cpp \
+        ConnectionController/lines/flatline.cpp \
+        ConnectionController/lines/iline.cpp \
+        ConnectionController/lines/ortogonalline.cpp \
         Toolbar_elements/m_button.cpp \
         common_files/m_spinbox.cpp \
         ConnectionController/connection_controller.cpp \
+        custom_scene.cpp \
         m_view.cpp \
         main.cpp \
         mainwindow.cpp
@@ -44,12 +47,15 @@ HEADERS += \
         Components/tools/component.h \
         Components/resistor.h \
         Components/tools/port.h \
-        ConnectionController/flatline.h \
-        ConnectionController/linenode.h \
-        ConnectionController/singlelineitem.h \
+        ConnectionController/lineitems/flatlineitem.h \
+        ConnectionController/lineitems/ortogonallineitem.h \
+        ConnectionController/lines/flatline.h \
+        ConnectionController/lines/iline.h \
+        ConnectionController/lines/ortogonalline.h \
         Toolbar_elements/m_button.h \
         common_files/m_spinbox.h \
         ConnectionController/connection_controller.h \
+        custom_scene.h \
         m_view.h \
         mainwindow.h
 

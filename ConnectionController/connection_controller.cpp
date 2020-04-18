@@ -1,12 +1,11 @@
 #include "connection_controller.h"
-#include <QDebug>
-#include "mainwindow.h"
 #include <QMessageBox>
+#include "mainwindow.h"
 
 
 Connection_controller::Connection_controller(QObject *parent): QObject(parent)
 {
-
+    //meant to make and store connection instances
 }
 Connection_controller::~Connection_controller(){}
 
@@ -15,16 +14,11 @@ void Connection_controller::setMode(const ConnectionMode& a)
     mode = a;
 }
 
-//void Connection_controller::setView(QGraphicsView *a)
-//{
-//    m_view = a;
-//}
-
+//receives pin's, makes and emits line instances
 void Connection_controller::receiving_pin(Pin *a)
 {
     try {
-        qDebug() << a;
-        if(mode == ConnectionMode::flat){
+        if(mode != ConnectionMode::none){
             if(!pin1){
                 pin1 = a;
                 return;
@@ -41,18 +35,31 @@ void Connection_controller::receiving_pin(Pin *a)
             if(pin1->parentItem() == pin2->parentItem())
                 throw std::invalid_argument("cant attach pins of same parent with flat line");
 
-            QGraphicsLineItem* line = new QGraphicsLineItem;
+            if(mode == ConnectionMode::flat){
+                ILine* line = new FlatLine(pin1,pin2);
 
-            line->setLine(pin1->scenePos().rx(),pin1->scenePos().ry(), pin2->scenePos().rx(), pin2->scenePos().ry());
-    //        this->m_view->scene()->addItem(line);
-            line->setFlag(QGraphicsLineItem::ItemIsMovable);
-            emit item_created(line);
+                line->setLine(pin1->scenePos().rx(),pin1->scenePos().ry(), pin2->scenePos().rx(), pin2->scenePos().ry());
+                pin1->add_line(line);
+                pin2->add_line(line);
+
+                vec_of_lines.push_back(line);
+                emit item_created(line);
+            }else if(mode == ConnectionMode::polyline){
+                ILine* line = new OrtogonalLine(pin1,pin2);
+
+                line->setLine(pin1->scenePos().rx(),pin1->scenePos().ry(), pin2->scenePos().rx(), pin2->scenePos().ry());
+                pin1->add_line(line);
+                pin2->add_line(line);
+
+                vec_of_lines.push_back(line);
+                emit item_created(line);
+            }
+
         }
     } catch (const std::invalid_argument& a) {
-//        qDebug() << a.what();
         QMessageBox* b = new QMessageBox;
         b->setIcon(QMessageBox::Critical);
-        b->setText("Self attachment with flat line not allowed");
+        b->setText("Self attachment is not allowed");
         b->setWindowTitle("Error");
         b->setAttribute(Qt::WA_DeleteOnClose, true);
         b->addButton("Ok", QMessageBox::RejectRole);
@@ -61,6 +68,4 @@ void Connection_controller::receiving_pin(Pin *a)
         return;
     }
 
-
-    qDebug() << "received it" << a->scenePos();
 }

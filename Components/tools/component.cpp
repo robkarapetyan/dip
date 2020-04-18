@@ -6,6 +6,9 @@
 #include <QGraphicsScene>
 #include "port.h"
 #include "component.h"
+#include "ConnectionController/lines/flatline.h"
+#include "ConnectionController/lines/ortogonalline.h"
+#include "ConnectionController/lines/iline.h"
 
 Component::Component(QGraphicsObject *parent) : QGraphicsObject(parent)
 {
@@ -112,10 +115,46 @@ void Pin::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     QGraphicsRectItem::hoverLeaveEvent(event);
 }
 
+void Pin::add_line(QGraphicsItem * line)
+{
+    this->vec_of_connections.push_back(line);
+}
+
+void Pin::remove_line(QGraphicsItem * line)
+{
+    vec_of_connections.removeAll(line);
+}
+
 QVariant Pin::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     if(this->parentItem())
     this->parentItem()->update(this->parentItem()->boundingRect());
+
+    if(change == QGraphicsItem::ItemScenePositionHasChanged){
+
+        for (auto i : vec_of_connections){
+            if(auto j = dynamic_cast<FlatLine*>(i)){
+                if(j->start == this){
+                    j->setLine(value.toPointF().x(), value.toPointF().y(), j->end->scenePos().x(), j->end->scenePos().y());
+                }
+                if(j->end == this){
+                    j->setLine(j->start->scenePos().x(), j->start->scenePos().y(), value.toPointF().x(), value.toPoint().y());
+
+                }
+            }
+            if(auto j = dynamic_cast<OrtogonalLine*>(i)){
+                if(j->start == this){
+                    j->setLine(value.toPointF().x(), value.toPointF().y(), j->end->scenePos().x(), j->end->scenePos().y());
+                }
+                if(j->end == this){
+                    j->setLine(j->start->scenePos().x(), j->start->scenePos().y(), value.toPointF().x(), value.toPoint().y());
+
+                }
+            }
+
+        }
+    }
+
     return QGraphicsRectItem::itemChange(change,value);
 }
 

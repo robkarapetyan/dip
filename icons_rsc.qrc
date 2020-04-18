@@ -13,5 +13,7 @@
         <file>icons/pin.png</file>
         <file>icons/conntr.png</file>
         <file>icons/plainconnect.png</file>
+        <file>icons/movev.png</file>
+        <file>icons/moveh.png</file>
     </qresource>
 </RCC>

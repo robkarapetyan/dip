@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "custom_scene.h"
 #include "ui_mainwindow.h"
 #include <QWidget>
 #include <QGraphicsPixmapItem>
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->spinBox->setCorrectionMode(QSpinBox::CorrectionMode(QAbstractSpinBox::CorrectToNearestValue));
 
-    QGraphicsScene* scene = new QGraphicsScene(this);
+    Custom_scene* scene = new Custom_scene(this);
     //Custom_scene* scene = new Custom_scene(ui->graphicsView);
     QBrush brush(Qt::white);
     QGraphicsRectItem* rct = new QGraphicsRectItem(0,0,750,505);

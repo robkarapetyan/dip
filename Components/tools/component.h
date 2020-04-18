@@ -11,7 +11,9 @@
 #include <QInputDialog>
 #include <QDebug>
 
+
 class Component;
+//class ILine;
 
 class Pin : public QGraphicsRectItem
 {
@@ -25,9 +27,12 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void hoverEnterEvent(QGraphicsSceneHoverEvent * event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent * event) override;
+
+    void add_line(QGraphicsItem*);
+    void remove_line(QGraphicsItem*);
 protected:
     QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
-
+    QVector<QGraphicsItem*> vec_of_connections = {};
 };
 
 
