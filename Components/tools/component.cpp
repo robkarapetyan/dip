@@ -15,14 +15,9 @@ Component::Component(QGraphicsObject *parent) : QGraphicsObject(parent)
     this->setFlag(ItemIsMovable);
     this->pic->setFlag(ItemIgnoresParentOpacity);
     this->pic->setParentItem(this);
+    setProperty("icon", "pic->iconPath()");
+    setProperty("icoasn", "ddddd");
 
-//    connect(this, SIGNAL(pin_hover_signal(int)), this, SLOT(test_of_pin_click(int)));
-//    m_text.setParentItem(this->pic);
-//    m_text.setPos(4,-8);
-//    //m_text.setFlag(GraphicsItemFlag::ItemIsMovable);
-//    m_text.setPen(QPen(QColor(Qt::red)));
-//    m_text.setText("0");
-//    m_text.setFont(QFont("arial",8,-1,false));
 }
 
 Component::~Component()
@@ -33,7 +28,7 @@ void Component::add_pin(const qreal &x, const qreal &y)
 {
     Pin * pin1 = new Pin;
     pin1->moveBy(x,y);
-    //this->vec_of_pins.push_back(pin1);
+    this->vec_of_pins.push_back(pin1);
     pin1->setParentItem(this->pic);
 }
 
@@ -66,6 +61,11 @@ void Component::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 QRectF Component::boundingRect() const
 {
     return this->childrenBoundingRect();
+}
+
+QString Component::icon_path() const
+{
+    return pic->iconPath();
 }
 
 
@@ -229,7 +229,19 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
     QGraphicsPixmapItem::contextMenuEvent(event);
 }
 
+
+void Component::M_pixmap::setPixmap(const QString &ico)
+{
+    _icon_path = ico;
+    QGraphicsPixmapItem::setPixmap(QPixmap(ico));
+}
+
 void Component::M_pixmap::setParent(Component *parent)
 {
     this->parentptr = parent;
+}
+
+QString Component::M_pixmap::iconPath()
+{
+    return _icon_path;
 }

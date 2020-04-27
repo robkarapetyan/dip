@@ -108,6 +108,17 @@ MainWindow::MainWindow(QWidget *parent) :
      }
     QObject::connect(but->line,SIGNAL(textChanged(QString)),this,SLOT(slot1(QString)));
     ui->mainToolBar->addWidget(but);
+
+    lib = new Library;
+
+    //library usage example
+    lib->init();
+    lib->add_component(new Capacitor);
+    lib->add_component(new Resistor);
+
+    lib->remove_component("cap");
+    lib->remove_component("resistor");
+
 }
 
 MainWindow::~MainWindow()

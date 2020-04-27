@@ -26,6 +26,7 @@ CONFIG += c++11
 
 SOURCES += \
         Components/capacitor.cpp \
+        Components/library.cpp \
         Components/tools/component.cpp \
         Components/resistor.cpp \
         Components/tools/port.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
 
 HEADERS += \
         Components/capacitor.h \
+        Components/library.h \
         Components/tools/component.h \
         Components/resistor.h \
         Components/tools/port.h \

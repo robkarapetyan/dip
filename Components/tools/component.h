@@ -50,8 +50,11 @@ class Component: public QGraphicsObject
          explicit M_pixmap(Component * ptr = nullptr);
         ~M_pixmap() override;
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *)  override;
-    //        void moveevent
+        void setPixmap(const QString &ico);
         void setParent(Component* parent);
+        QString iconPath();
+    private:
+        QString _icon_path = "";
     };
 
 public:
@@ -61,7 +64,9 @@ public:
     void add_pin(const qreal &x, const qreal &y);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
+    QString icon_path() const;
     QString type = "";
+    QVector<Pin *> vec_of_pins = {};
 
     //test
     void signal_test(int a);
@@ -73,7 +78,6 @@ signals:
     void pin_hover_signal(Pin*);
 
 protected:
-    QVector<Pin *> vec_of_pins = {};
     M_pixmap * pic = new M_pixmap(this);
 
 private:

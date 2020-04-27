@@ -12,7 +12,7 @@ Resistor::Resistor(QGraphicsObject * parent): Component(parent)
     this->setAcceptHoverEvents(true);
 //    this->setFlag(ItemIsMovable);
 
-    this->pic->setPixmap(QPixmap("://icons/resh.ico"));
+    this->pic->setPixmap("://icons/resh.ico");
 
     //this->pic->setFlag(ItemIsMovable);
     //this->pic->setAcceptHoverEvents(true);

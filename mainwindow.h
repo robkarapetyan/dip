@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QSvgGenerator>
 #include "Toolbar_elements/m_button.h"
-
+#include "Components/library.h"
 
 
 namespace Ui {
@@ -24,6 +24,7 @@ private:
     QString input = ""; //remove from here
 
     QString current_file = "";
+    Library* lib = nullptr;
 
 public slots:
 void slot1(QString text );

@@ -10,7 +10,7 @@ Capacitor::Capacitor(QGraphicsObject *parent): Component(parent)
 
 
 //    this->setFiltersChildEvents(false);
-    this->pic->setPixmap(QPixmap("://icons/caph.png"));
+    this->pic->setPixmap("://icons/caph.png");
 
     //this->pic->setFlag(ItemIsMovable);
     //this->pic->setAcceptHoverEvents(true);

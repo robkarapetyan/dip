@@ -13,14 +13,10 @@ public:
     explicit Custom_scene(QObject *parent = 0);
     ~Custom_scene();
 
-signals:
-
 public slots:
 
 private:
-    //void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    //void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 };
 
 #endif // CUSTOM_SCENE_H
