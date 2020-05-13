@@ -1,6 +1,8 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+//todo adding tri-state properties map
+
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsItem>
 #include <QGraphicsObject>
@@ -9,6 +11,9 @@
 #include <QAction>
 #include <QMenu>
 #include <QInputDialog>
+#include <QGridLayout>
+#include <QTableWidget>
+#include <QComboBox>
 #include <QDebug>
 
 
@@ -64,10 +69,15 @@ public:
     void add_pin(const qreal &x, const qreal &y);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
+    void set_pixmap(const QString&);
     QString icon_path() const;
     QString type = "";
     QVector<Pin *> vec_of_pins = {};
-
+    QMap<QString, QString> tri_states_map = {};
+    void add_tri_state_prop(const QString& name, const QString& states);
+    void remove_tri_state_prop(const QString& name);
+    void make_pins_movable();
+    void block_pin_moving();
     //test
     void signal_test(int a);
 

@@ -9,6 +9,22 @@ Connection_controller::Connection_controller(QObject *parent): QObject(parent)
 }
 Connection_controller::~Connection_controller(){}
 
+void Connection_controller::add_item(ILine * line)
+{
+    vec_of_lines.push_back(line);
+    emit item_created(line);
+}
+
+//void Connection_controller::remove_item(ILine *)
+//{
+
+//}
+
+//void Connection_controller::delete_item(ILine *)
+//{
+
+//}
+
 void Connection_controller::setMode(const ConnectionMode& a)
 {
     mode = a;
@@ -33,7 +49,7 @@ void Connection_controller::receiving_pin(Pin *a)
             }
 
             if(pin1->parentItem() == pin2->parentItem())
-                throw std::invalid_argument("cant attach pins of same parent with flat line");
+                throw std::invalid_argument("cant attach pins of same parent");
 
             if(mode == ConnectionMode::flat){
                 ILine* line = new FlatLine(pin1,pin2);

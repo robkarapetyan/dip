@@ -15,8 +15,9 @@ Component::Component(QGraphicsObject *parent) : QGraphicsObject(parent)
     this->setFlag(ItemIsMovable);
     this->pic->setFlag(ItemIgnoresParentOpacity);
     this->pic->setParentItem(this);
-    setProperty("icon", "pic->iconPath()");
-    setProperty("icoasn", "ddddd");
+    setProperty("rotation_angle", 0);
+//    setProperty("icon", "pic->iconPath()");
+//    setProperty("icoasn", "ddddd");
 
 }
 
@@ -30,6 +31,8 @@ void Component::add_pin(const qreal &x, const qreal &y)
     pin1->moveBy(x,y);
     this->vec_of_pins.push_back(pin1);
     pin1->setParentItem(this->pic);
+
+    setProperty("pins", vec_of_pins.size());
 }
 
 
@@ -41,7 +44,6 @@ void Component::rotate(int angle)
     txf.translate(0,0);
     this->setTransform(txf, true);
 }
-
 
 
 void Component::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
@@ -63,9 +65,41 @@ QRectF Component::boundingRect() const
     return this->childrenBoundingRect();
 }
 
+void Component::set_pixmap(const QString & path)
+{
+    pic->setPixmap(path);
+//    setProperty("icon", path);
+}
+
 QString Component::icon_path() const
 {
     return pic->iconPath();
+}
+
+void Component::add_tri_state_prop(const QString &name, const QString &states)
+{
+    tri_states_map.insert(name + "_tri_state", states);
+    tri_states_map.insert(name + "_tri_state_active", states.split(",").at(0));
+}
+
+void Component::remove_tri_state_prop(const QString &name)
+{
+    tri_states_map.remove(name + "_tri_state");
+    tri_states_map.remove(name + "_tri_state_active");
+}
+
+void Component::make_pins_movable()
+{
+    for ( auto i : vec_of_pins){
+        i->setFlag(ItemIsMovable, true);
+    }
+}
+
+void Component::block_pin_moving()
+{
+    for ( auto i : vec_of_pins){
+        i->setFlag(ItemIsMovable, false);
+    }
 }
 
 
@@ -173,6 +207,7 @@ Component::M_pixmap::~M_pixmap()
 
 void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
+
     QMenu * menu = new QMenu;
     QAction * act1 = menu->addAction("rotate");
     QAction * act2 =  menu->addAction("remove");
@@ -188,44 +223,102 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
         txf.rotate(a, Qt::ZAxis);
         txf.translate(0,0);
         this->setTransform(txf, true);
+
+
+        if(parentptr->property("rotation_angle").toInt() != 270)
+            parentptr->setProperty("rotation_angle", parentptr->property("rotation_angle").toInt() + 90);
+        else{
+            parentptr->setProperty("rotation_angle", 0);
+        }
     });
     connect(act2, &QAction::triggered, [this](){
         //this->scene()->removeItem(this->parentItem());
         this->parentptr->~Component();
     });
-    connect(act3, &QAction::triggered, [this,widget](){
+    connect(act3, &QAction::triggered, [this, act1](){
+        QDialog* contextmenu_dialog = new QDialog;
+        contextmenu_dialog->deleteLater();
+        QGridLayout* contextmenu_dialog_layout = new QGridLayout(contextmenu_dialog);
+        contextmenu_dialog->setWindowTitle(parentptr->objectName() + " properties");
 
-         if(this->parentObject()->objectName() == "resistor")
-         {
-              bool ok;
-              int i = QInputDialog::getInt(widget, tr("Set Resistance"),
-                                                            tr("resistance ( OHM )"), this->parentptr->value,
-                                                             0,2000000,1, &ok);
-              if (ok)
-              {
-                 if(i != 0){
-                    this->parentptr->value = i;
-                 }
+        QTableWidget* tablewidget1 = new QTableWidget(contextmenu_dialog);
+        tablewidget1->setColumnCount(3);
+        tablewidget1->setHorizontalHeaderLabels({"name", "value", "state"});
+        tablewidget1->setRowCount(parentptr->dynamicPropertyNames().size());
 
-              }
-         }
-         else if(this->parentObject()->objectName() == "capacitor"){
-              qDebug("capaciting");
-              bool ok;
-              int i = QInputDialog::getInt(widget, tr("Set Capacitance"),
-                                                              tr("capacitance ( pF )"), this->parentptr->value,
-                                                              0,2000000,1, &ok);
-              if (ok)
-              {
-                 if(i != 0){
-                    this->parentptr->value = i;
-                 }
-              }
-         }
-             // i - result taken from inputdialog
+        connect(tablewidget1, &QTableWidget::cellChanged, [this, tablewidget1, act1](int row, int column){
+            qDebug() << parentptr->dynamicPropertyNames().at(column - 1);
+            qDebug() << tablewidget1->item(row,column)->data(Qt::DisplayRole);
+            if(parentptr->dynamicPropertyNames().at(column - 1) == "rotation_angle"){
+                act1->trigger();
+            }
+            parentptr->setProperty(parentptr->dynamicPropertyNames().at(column - 1), tablewidget1->item(row,column)->data(Qt::DisplayRole));
+        });
+        tablewidget1->blockSignals(true);
+        for( int i = 0; i < parentptr->dynamicPropertyNames().size(); ++i){
+            QTableWidgetItem* nameitem1 = new QTableWidgetItem();
+            nameitem1->setData(Qt::ItemDataRole::DisplayRole,
+                               parentptr->dynamicPropertyNames().at(i));
+            tablewidget1->setItem(i, 0, nameitem1);
+
+            QTableWidgetItem* valueitem1 = new QTableWidgetItem();
+            valueitem1->setData(Qt::ItemDataRole::DisplayRole,
+                             parentptr->property( parentptr->dynamicPropertyNames().at(i)));
+            tablewidget1->setItem(i, 1, valueitem1);
+
+            if(parentptr->tri_states_map.contains(parentptr->dynamicPropertyNames().at(i) + "_tri_state")){
+
+                QString prop_states = parentptr->tri_states_map[
+                                      parentptr->dynamicPropertyNames().at(i) + "_tri_state"];
+                QComboBox* comboitem = new QComboBox(contextmenu_dialog);
+                QStringList state_list = prop_states.split(",");
+
+                for(auto i : state_list){
+                    comboitem->addItem(i);
+                }
+                comboitem->setCurrentText(parentptr->tri_states_map[
+                                          parentptr->dynamicPropertyNames().at(i) + "_tri_state_active"]);
+                tablewidget1->setCellWidget(i, 2, comboitem);
+
+                connect(comboitem, QOverload<const QString &>::of(&QComboBox::currentIndexChanged), [this, i, comboitem, tablewidget1](const QString &text){
+                    QString old_text = parentptr->tri_states_map[parentptr->dynamicPropertyNames().at(i) + "_tri_state_active"];
+                    parentptr->tri_states_map.remove(parentptr->dynamicPropertyNames().at(i) + "_tri_state_active");
+                    parentptr->tri_states_map.insert(parentptr->dynamicPropertyNames().at(i) + "_tri_state_active", text);
+                    comboitem->currentIndex();
+
+                    int old_index = comboitem->findText(old_text);
+                    int new_index = comboitem->currentIndex();
+                    if(old_index > new_index){
+                        parentptr->setProperty(parentptr->dynamicPropertyNames().at(i), parentptr->property(parentptr->dynamicPropertyNames().at(i)).toDouble() / 1000);
+                        tablewidget1->item(i, 1)->setData(Qt::DisplayRole, tablewidget1->item(i, 1)->data(Qt::DisplayRole).toDouble() / 1000);
+                    }
+                    if(old_index < new_index){
+                        parentptr->setProperty(parentptr->dynamicPropertyNames().at(i), parentptr->property(parentptr->dynamicPropertyNames().at(i)).toDouble() * 1000);
+                        tablewidget1->item(i, 1)->setData(Qt::DisplayRole, tablewidget1->item(i, 1)->data(Qt::DisplayRole).toDouble() * 1000);
+                    }
+                });
+            }
+
+        }
+        tablewidget1->blockSignals(false);
+
+    //    tablewidget1->setGeometry(0,0, 600, 400);
+        contextmenu_dialog_layout->addWidget(tablewidget1);
+        contextmenu_dialog->setLayout(contextmenu_dialog_layout);
+
+    //    contextmenu_dialog_layout->setGeometry(QRect(0,0, 600,400));
+        contextmenu_dialog->resize(350, 180);
+        contextmenu_dialog->exec();
+
     });
 
-    menu->exec(QPoint(event->screenPos().rx()+3,event->screenPos().ry()));
+    menu->exec(event->screenPos());
+
+//    qDebug() << this->parentptr;
+//    qDebug() << this->parentObject();
+
+
+
     QGraphicsPixmapItem::contextMenuEvent(event);
 }
 

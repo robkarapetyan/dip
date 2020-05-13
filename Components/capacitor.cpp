@@ -20,7 +20,7 @@ Capacitor::Capacitor(QGraphicsObject *parent): Component(parent)
     this->add_pin(23,10);
     this->add_pin(-3,10);
 
-
+    setProperty("head", "passive");
     //this->vec_of_pins.push_back(pin1);
     //this->vec_of_pins.push_back(pin2);
 }

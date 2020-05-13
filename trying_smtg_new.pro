@@ -25,7 +25,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Components/actioncontroller.cpp \
         Components/capacitor.cpp \
+        Components/commandcontroller.cpp \
         Components/library.cpp \
         Components/tools/component.cpp \
         Components/resistor.cpp \
@@ -36,6 +38,7 @@ SOURCES += \
         ConnectionController/lines/iline.cpp \
         ConnectionController/lines/ortogonalline.cpp \
         Toolbar_elements/m_button.cpp \
+        Tools/LibraryEditor/libeditor.cpp \
         common_files/m_spinbox.cpp \
         ConnectionController/connection_controller.cpp \
         custom_scene.cpp \
@@ -44,7 +47,9 @@ SOURCES += \
         mainwindow.cpp
 
 HEADERS += \
+        Components/actioncontroller.h \
         Components/capacitor.h \
+        Components/commandcontroller.h \
         Components/library.h \
         Components/tools/component.h \
         Components/resistor.h \
@@ -55,6 +60,7 @@ HEADERS += \
         ConnectionController/lines/iline.h \
         ConnectionController/lines/ortogonalline.h \
         Toolbar_elements/m_button.h \
+        Tools/LibraryEditor/libeditor.h \
         common_files/m_spinbox.h \
         ConnectionController/connection_controller.h \
         custom_scene.h \
@@ -62,6 +68,7 @@ HEADERS += \
         mainwindow.h
 
 FORMS += \
+        Tools/LibraryEditor/libeditor.ui \
         mainwindow.ui
 
 # Default rules for deployment.

@@ -15,5 +15,11 @@
         <file>icons/plainconnect.png</file>
         <file>icons/movev.png</file>
         <file>icons/moveh.png</file>
+        <file>icons/redo.png</file>
+        <file>icons/undo.png</file>
+        <file>icons/grid1.png</file>
+        <file>icons/grid2.png</file>
+        <file>icons/grid3.png</file>
+        <file>icons/grid4.png</file>
     </qresource>
 </RCC>

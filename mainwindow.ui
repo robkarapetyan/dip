@@ -95,14 +95,32 @@
     <property name="title">
      <string>file</string>
     </property>
+    <widget class="QMenu" name="menuexport">
+     <property name="title">
+      <string>export</string>
+     </property>
+     <addaction name="actionLib"/>
+     <addaction name="actionSVG"/>
+     <addaction name="actionSPICE"/>
+    </widget>
+    <widget class="QMenu" name="menuimport">
+     <property name="title">
+      <string>import</string>
+     </property>
+     <addaction name="actionLib_2"/>
+    </widget>
     <addaction name="actionSave"/>
     <addaction name="actionOpen"/>
+    <addaction name="separator"/>
+    <addaction name="menuexport"/>
+    <addaction name="menuimport"/>
    </widget>
    <widget class="QMenu" name="menuffd">
     <property name="title">
      <string>edit</string>
     </property>
     <addaction name="actiona1k"/>
+    <addaction name="actionredo"/>
    </widget>
    <widget class="QMenu" name="menucomponents">
     <property name="title">
@@ -112,9 +130,22 @@
     <addaction name="actionpassive"/>
     <addaction name="actionsources"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionLibrary_Editor"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
    <addaction name="menuff"/>
    <addaction name="menuffd"/>
    <addaction name="menucomponents"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="movable">
@@ -168,9 +199,22 @@
    <addaction name="actionplain_connection"/>
    <addaction name="actioncurved_connection"/>
   </widget>
+  <widget class="QToolBar" name="toolBar_3">
+   <property name="windowTitle">
+    <string>toolBar_3</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionaction_undo"/>
+   <addaction name="actionaction_redo"/>
+  </widget>
   <action name="actiona1k">
    <property name="text">
-    <string>a1k</string>
+    <string>undo</string>
    </property>
   </action>
   <action name="actionactive">
@@ -250,6 +294,54 @@
    </property>
    <property name="text">
     <string>curved connection</string>
+   </property>
+  </action>
+  <action name="actionLibrary_Editor">
+   <property name="text">
+    <string>Library Editor</string>
+   </property>
+  </action>
+  <action name="actionLib">
+   <property name="text">
+    <string>Lib</string>
+   </property>
+  </action>
+  <action name="actionSVG">
+   <property name="text">
+    <string>SVG</string>
+   </property>
+  </action>
+  <action name="actionSPICE">
+   <property name="text">
+    <string>SPICE</string>
+   </property>
+  </action>
+  <action name="actionLib_2">
+   <property name="text">
+    <string>Lib</string>
+   </property>
+  </action>
+  <action name="actionredo">
+   <property name="text">
+    <string>redo</string>
+   </property>
+  </action>
+  <action name="actionaction_undo">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/undo.png</normaloff>:/icons/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>undo</string>
+   </property>
+  </action>
+  <action name="actionaction_redo">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/redo.png</normaloff>:/icons/redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>edo</string>
    </property>
   </action>
  </widget>

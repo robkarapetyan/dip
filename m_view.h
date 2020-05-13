@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include <QMenu>
 #include <QContextMenuEvent>
+#include <QGraphicsLineItem>
 #include "Components/capacitor.h"
 #include "Components/resistor.h"
 #include "Components/tools/component.h"
@@ -25,9 +26,10 @@ public:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     ActiveMode mode = ActiveMode::none;
-    std::vector<Component*> vec_of_components_p = {};
+//    std::vector<Component*> vec_of_components_p = {};
     void set_to_(const ActiveMode& a);
     Connection_controller* conncontroller;
+//    void setGrid_enabled(bool);
 
 signals:
     void scaling_sig(int new_val);
@@ -35,9 +37,10 @@ signals:
 public slots:
     void add_received_lineItem(QGraphicsItem*);
     void change_scale(int new_scale);
-    void resistor_received();
-    void capacitor_received();
+    void component_action_received(QAction*);
 private:
     int m_scaling = 100;
+    QGraphicsItemGroup* gridgroup = nullptr;
+
 };
 #endif // M_VIEW_H

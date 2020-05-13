@@ -130,6 +130,30 @@ void M_view::set_to_(const ActiveMode &a)
     mode = a;
 }
 
+//void M_view::setGrid_enabled(bool a)
+//{
+//    if(a){
+//        if(!gridgroup){
+//            gridgroup = new QGraphicsItemGroup;
+//            for (int x=0; x<=500; x+=50)
+//                gridgroup->addToGroup(new QGraphicsLineItem(x,0,x,500, gridgroup));
+//    //        scene()
+//            // Now add the horizontal lines, paint them green
+//            for (int y=0; y<=500; y+=50)
+//                gridgroup->addToGroup(new QGraphicsLineItem(0,y,500,y,  gridgroup));
+//        }
+//        gridgroup->setActive(false);
+//        for (auto i : gridgroup->childItems()){
+//            i->setActive(false);
+//        }
+//        gridgroup->setVisible(true);
+//        scene()->addItem(gridgroup);
+//        return;
+//    }
+//    else
+//        gridgroup->setVisible(false);
+//}
+
 void M_view::add_received_lineItem(QGraphicsItem *a)
 {
     this->scene()->addItem(a);
@@ -149,12 +173,32 @@ void M_view::change_scale(int new_val)
     }
 }
 
-void M_view:: resistor_received()
+//make it work with lib
+//-- to hold a pointer to object of active type
+//and give return copy of it every time it is needed
+void M_view::component_action_received(QAction *action)
 {
-    this->mode = ActiveMode::resistor;
-}
-
-void M_view::capacitor_received()
-{
-    this->mode = ActiveMode::capacitor;
+    if (!action->isSeparator() && !action->isWidgetType())
+    {
+        if(action->text() == "Resistor")
+        {
+            this->mode = ActiveMode::resistor;
+        }
+        else if(action->text() == "Capacitor")
+        {
+            this->mode = ActiveMode::capacitor;
+            // switching state of (graphicsView->comp) to (Components::capacitor)
+        }
+        else if(action->text() == "Inductor")
+        {
+            // switching state of (graphicsView->comp) to (Components::inductor);
+        }
+        else if(action->text() == "Diode")
+        {
+            // switching state of (graphicsView->comp) to (Components::diode);
+        }
+        else {
+            // switching state of (graphicsView->comp) to (Components::none);
+        }
+    }
 }

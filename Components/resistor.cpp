@@ -3,7 +3,7 @@
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QDebug>
-
+#include <QMap>
 
 Resistor::Resistor(QGraphicsObject * parent): Component(parent)
 {
@@ -14,6 +14,9 @@ Resistor::Resistor(QGraphicsObject * parent): Component(parent)
 
     this->pic->setPixmap("://icons/resh.ico");
 
+    setProperty("resistance", 10);
+
+    add_tri_state_prop("resistance", "mOhm,Ohm,MOhm");
     //this->pic->setFlag(ItemIsMovable);
     //this->pic->setAcceptHoverEvents(true);
     //this->pic->setParentItem(this);
@@ -26,6 +29,10 @@ Resistor::Resistor(QGraphicsObject * parent): Component(parent)
 //    }
     //this->vec_of_pins.push_back(pin1);
     //this->vec_of_pins.push_back(pin2);
+    setProperty("head", "passive");
+//    QMap<int, QString> a;
+//    a.insert(4, "ss");
+//    setProperty("somemap", a.);
 }
 
 Resistor::~Resistor()

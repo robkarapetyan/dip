@@ -5,6 +5,7 @@
 #include <QSvgGenerator>
 #include "Toolbar_elements/m_button.h"
 #include "Components/library.h"
+#include "Tools/LibraryEditor/libeditor.h"
 
 
 namespace Ui {
@@ -15,7 +16,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    m_button* but = new m_button;
+    m_button* but = nullptr;
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -25,16 +26,16 @@ private:
 
     QString current_file = "";
     Library* lib = nullptr;
-
-public slots:
-void slot1(QString text );
+    LibEditor* editor = nullptr;
 
 private slots:
-void on_actionSave_triggered();
-void on_actionOpen_triggered();
-void on_actionadd_port_triggered();
-void on_actionplain_connection_triggered();
-void on_actioncurved_connection_triggered();
+    void on_actionSave_triggered();
+    void on_actionOpen_triggered();
+    void on_actionadd_port_triggered();
+    void on_actionplain_connection_triggered();
+    void on_actioncurved_connection_triggered();
+    void on_actionLibrary_Editor_triggered();
+//    void on_actionaction_grid_triggered();
 };
 
 #endif // MAINWINDOW_H

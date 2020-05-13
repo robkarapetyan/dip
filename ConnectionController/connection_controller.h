@@ -16,6 +16,11 @@ public:
     Connection_controller(QObject *);
     ~Connection_controller() override;
 
+    //to add already created connection from undo/redo stack
+    void add_item(ILine*);
+//    void remove_item(ILine*);
+//    void delete_item(ILine*);
+
     void setMode(const ConnectionMode &a);
 public slots:
     void receiving_pin(Pin*);
