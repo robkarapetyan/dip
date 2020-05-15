@@ -60,33 +60,17 @@ void M_view::mousePressEvent(QMouseEvent *event)
     {
          switch (this->mode)
          {
-             case ActiveMode::resistor:
+             case ActiveMode::component:
              {
                  if(!itemAt(event->pos())){
                      QPointF pt = mapToScene(event->pos());
-                     Resistor* restmp = new Resistor;
-                     restmp->setPos(pt.x() - 12,pt.y() - 12);
-                     this->scene()->addItem(restmp);
-                     connect(restmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
+                     Component* cmp = new Component(*active_component);
+                     cmp->setPos(pt.x() - 12,pt.y() - 12);
+                     this->scene()->addItem(cmp);
+                     connect(cmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
                  }
                  break;
               }
-              case ActiveMode::capacitor:
-              {
-                  if(!itemAt(event->pos())){
-                      QPointF pt = mapToScene(event->pos());
-                      Capacitor* captmp = new Capacitor;
-                      captmp->setPos(pt.x() - 12,pt.y() - 12);
-                      this->scene()->addItem(captmp);
-                      connect(captmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
-
-                  }
-                  break;
-              }
-              case ActiveMode::diode:
-                  break;
-              case ActiveMode::inductor:
-                  break;
               case ActiveMode::port:
               {
                 if(!itemAt(event->pos())){
@@ -95,11 +79,9 @@ void M_view::mousePressEvent(QMouseEvent *event)
                     pintmp->setPos(pt.x() +1,pt.y() +1);
                     this->scene()->addItem(pintmp);
                     connect(pintmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
-
                 }
                 break;
               }
-
               default: break;
          }
     }
@@ -176,9 +158,13 @@ void M_view::change_scale(int new_val)
 //make it work with lib
 //-- to hold a pointer to object of active type
 //and give return copy of it every time it is needed
-void M_view::component_action_received(QAction *action)
+void M_view::component_received(Component *cmp)
 {
-    if (!action->isSeparator() && !action->isWidgetType())
+    if(cmp){
+        set_to_(ActiveMode::component);
+        active_component = cmp;
+    }
+    /*if (!action->isSeparator() && !action->isWidgetType())
     {
         if(action->text() == "Resistor")
         {
@@ -200,5 +186,5 @@ void M_view::component_action_received(QAction *action)
         else {
             // switching state of (graphicsView->comp) to (Components::none);
         }
-    }
+    }*/
 }

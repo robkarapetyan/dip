@@ -106,15 +106,11 @@ Component *Library::lib_has(const QString &component_name)
     comp->setObjectName(component_name);
 
     QJsonArray pin_array = obj_to_deserialise["pins"].toArray();
-    for (int i = 0;i < pin_array.size() - 1; ++i){
+    for (int i = 0;i < pin_array.size() - 1; i+=2){
         comp->add_pin(pin_array[i].toDouble(), pin_array[i+1].toDouble());
     }
     comp->set_pixmap(obj_to_deserialise["icon"].toString());
-    //dynamic properties deserialization???
-    //{
-    //}
-    //    setProperty("icon", "pic->iconPath()");
-    //    setProperty("icoasn", "ddddd");
+
     QJsonObject prop_obj = obj_to_deserialise["properties"].toObject();
     for( auto i : prop_obj.keys()){
         comp->setProperty(i.toStdString().c_str(), prop_obj[i].toVariant());
@@ -286,23 +282,23 @@ bool Library::remove_header(const QString &name)
 
     //header removal
     QJsonObject rootobj = lib_json_doc->object();
-
-    if(rootobj["Headers"].toObject().keys().contains(name)){
-        return false;
-    }
-
-    if(!rootobj["Headers"].toObject().keys().contains(name)){
+    QJsonObject headersobj = rootobj["Headers"].toObject();
+    if(!headersobj.keys().contains(name)){
         return false;
     }else{
-        rootobj["Headers"].toObject().remove(name);
+        headersobj.remove(name);
     }
+
 
     QFile saveFile(libPath);
     if (!saveFile.open(QIODevice::WriteOnly)) {
         qWarning("Couldn't open save file.");
         return false;
     }
+
+    rootobj["Headers"] = headersobj;
     lib_json_doc->setObject(rootobj);
+
     saveFile.write(save_format == SaveFormat::Json
         ? lib_json_doc->toJson()
         : lib_json_doc->toBinaryData());
@@ -356,6 +352,19 @@ void Library::setBinaryFormat()
 QString Library::getLibPath() const
 {
     return libPath;
+}
+
+void Library::update()
+{
+    QFile saveFile(libPath);
+
+    if (!saveFile.open(QIODevice::ReadOnly)) {
+        qWarning("Couldn't open lib file.");
+        return;
+    }
+    lib_json_doc = new QJsonDocument( QJsonDocument::fromJson(saveFile.readAll()));
+
+    saveFile.close();
 }
 
 QJsonObject Library::serialize_component(const Component& component)

@@ -11,7 +11,7 @@
 #include "Components/tools/component.h"
 #include "ConnectionController/connection_controller.h"
 
-enum class ActiveMode{none,resistor,capacitor,inductor,diode,port,plainconnection,curvedconnection};
+enum class ActiveMode{none,component,port};
 
 class M_view : public QGraphicsView
 {
@@ -37,10 +37,10 @@ signals:
 public slots:
     void add_received_lineItem(QGraphicsItem*);
     void change_scale(int new_scale);
-    void component_action_received(QAction*);
+    void component_received(Component *);
 private:
     int m_scaling = 100;
-    QGraphicsItemGroup* gridgroup = nullptr;
-
+//    QGraphicsItemGroup* gridgroup = nullptr;
+    Component* active_component = nullptr;
 };
 #endif // M_VIEW_H

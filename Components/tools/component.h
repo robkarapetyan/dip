@@ -63,7 +63,9 @@ class Component: public QGraphicsObject
     };
 
 public:
-    explicit Component(QGraphicsObject * parent = nullptr);
+    Component(QGraphicsObject * parent = nullptr);
+    Component(const Component& other);
+
     ~Component() override;
 
     void add_pin(const qreal &x, const qreal &y);
@@ -71,7 +73,7 @@ public:
     QRectF boundingRect() const override;
     void set_pixmap(const QString&);
     QString icon_path() const;
-    QString type = "";
+//    QString type = "";
     QVector<Pin *> vec_of_pins = {};
     QMap<QString, QString> tri_states_map = {};
     void add_tri_state_prop(const QString& name, const QString& states);

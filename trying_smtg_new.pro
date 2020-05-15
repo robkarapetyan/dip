@@ -25,9 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        Components/actioncontroller.cpp \
         Components/capacitor.cpp \
-        Components/commandcontroller.cpp \
         Components/library.cpp \
         Components/tools/component.cpp \
         Components/resistor.cpp \
@@ -47,9 +45,7 @@ SOURCES += \
         mainwindow.cpp
 
 HEADERS += \
-        Components/actioncontroller.h \
         Components/capacitor.h \
-        Components/commandcontroller.h \
         Components/library.h \
         Components/tools/component.h \
         Components/resistor.h \

@@ -36,6 +36,7 @@ public:
     void setJsonFormat();
     void setBinaryFormat();
     QString getLibPath() const;
+    void update();
 
 private:
     QString libPath = "";

@@ -36,6 +36,7 @@ QVariant OrtogonalLineItem::itemChange(QGraphicsItem::GraphicsItemChange change,
     if(change == QGraphicsItem::ItemPositionChange){
         if(orient == Qt::Orientation::Horizontal){
             if(previous_sibling){
+//                previous_sibling->setFlag(itemd)
 //                qDebug() << value.toPointF().y() << "this scenepos";
 //                qDebug() << previous_sibling->line().p2().ry()  << "this sceneposssssss";
 //                qDebug() << pos().y() << "kkkk";

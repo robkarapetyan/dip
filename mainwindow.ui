@@ -121,12 +121,22 @@
     </property>
     <addaction name="actiona1k"/>
     <addaction name="actionredo"/>
+    <addaction name="separator"/>
+    <addaction name="actionFind"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menucomponents">
     <property name="title">
      <string>components</string>
     </property>
-    <addaction name="actionactive"/>
+    <widget class="QMenu" name="menuactive">
+     <property name="title">
+      <string>active</string>
+     </property>
+     <addaction name="actionsmtg"/>
+    </widget>
+    <addaction name="menuactive"/>
     <addaction name="actionpassive"/>
     <addaction name="actionsources"/>
    </widget>
@@ -135,6 +145,8 @@
      <string>Tools</string>
     </property>
     <addaction name="actionLibrary_Editor"/>
+    <addaction name="separator"/>
+    <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -215,11 +227,6 @@
   <action name="actiona1k">
    <property name="text">
     <string>undo</string>
-   </property>
-  </action>
-  <action name="actionactive">
-   <property name="text">
-    <string>active</string>
    </property>
   </action>
   <action name="actionpassive">
@@ -342,6 +349,26 @@
    </property>
    <property name="text">
     <string>edo</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="text">
+    <string>Find</string>
+   </property>
+  </action>
+  <action name="actionsmtg">
+   <property name="text">
+    <string>smtg</string>
    </property>
   </action>
  </widget>

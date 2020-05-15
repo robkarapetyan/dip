@@ -39,38 +39,29 @@ MainWindow::MainWindow(QWidget *parent) :
     scene->setBackgroundBrush(QBrush(Qt::white));
     ui->graphicsView->setScene(scene);
 
-    //Remove from here or initialisate with lib
-    //toolbar searchbutton initialisation and setup  ======
-    but = new m_button;
-    connect(but, SIGNAL( action_triggered(QAction*)), ui->graphicsView,
-            SLOT( component_action_received(QAction*)));
-    // button with search bar
-        but->setText("Elements");
-        but->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/resh.ico"),"Resistor");
-        but->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/caph.png"),"Capacitor");
-        but->add_action("Inductor");
-        but->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/dioh.png"),"Diode");
-        but->add_action("Zener");
-        but->add_action("Capacitar");
-        but->add_action("Capacitarer");
-        but->add_action("Stabilitrone");
-    ui->mainToolBar->addWidget(but);
+
 
     //library initialisation
     lib = new Library;
+    lib->init();
+
+
+    //Remove from here or initialisate with lib
+    //toolbar searchbutton initialisation and setup  ======
+    but = new m_button;
+    connect(but, SIGNAL( action_triggered(QAction*)), this,
+            SLOT( toolbar_button_action_receiver(QAction*)));
+    but->menu()->setMaximumHeight(300);
+    ui->mainToolBar->addWidget(but);
+    but->update_actions(lib);
 
     //library usage example
-    lib->init();
-    lib->add_component(new Capacitor);
+//    lib->add_component(new Capacitor);
 //    lib->add_component(new Resistor);
-
-    Resistor* res = new Resistor;
-
-
-    lib->add_component(res);
-    //invalid component name
-//    lib->remove_component("cap");
-
+//    Resistor* res = new Resistor;
+//    lib->add_component(res);
+    connect(this, SIGNAL( current_component(Component*)), ui->graphicsView,
+            SLOT(component_received(Component *)));
 }
 
 MainWindow::~MainWindow()
@@ -217,17 +208,14 @@ void MainWindow::on_actionLibrary_Editor_triggered()
 {
     if(!editor){
         editor = new LibEditor(this);
-//        connect(editor, &LibEditor::lib_modifications_accepted, [this]( const Library& new_lib){
-//            *this->lib = new_lib;
-//            qDebug() << lib->components("all");
-//        });
-//        connect(editor, SIGNAL( lib_modifications_accepted(const Library&)),
-//                )
     }
     editor->setModal(true);
     editor->setLib(lib);
     editor->update_treewidget();
-    editor->show();
+    if(editor->exec() == 1){
+        lib->update();
+        but->update_actions(lib);
+    }
 }
 
 //void MainWindow::on_actionaction_grid_triggered()
@@ -239,3 +227,98 @@ void MainWindow::on_actionLibrary_Editor_triggered()
 //        ui->graphicsView->setGrid_enabled(false);
 
 //}
+
+void MainWindow::on_actionpassive_triggered()
+{
+//    update_component_menu();
+
+    but->update_actions(lib);
+
+}
+
+void MainWindow::toolbar_button_action_receiver(QAction *act)
+{
+    if(lib->lib_has(act->text())){
+        emit current_component(lib->lib_has(act->text()));
+    }
+}
+
+QAction *MainWindow::find_action(QAction *, const QString&)
+{
+//    for( auto i : head->menu()->actions()){
+//        if(i->objectName() == objname)
+//            return i;
+//    }
+
+//    for( auto i : head->menu()->actions()){
+//        if(i->menu() != head->menu()){
+//            if(QAction* a = find_action(i, objname)){
+//                    return a;
+//            }
+//        }
+//    }
+
+    return nullptr;
+}
+
+void MainWindow::update_component_menu()
+{
+    if(lib->headers().keys().isEmpty())
+    return;
+    //clear menu,set some new
+    ui->menucomponents->clear();
+
+//    //add headers as actions
+//    int previous = -1;
+//    for(auto i : lib->headers().keys()){
+//        if(i != previous && !lib->headers().keys().isEmpty()){
+//            //list of pairs with header(name, parent)
+//            QList<QPair<QString, QString> > valuelist = lib->headers().values(i);
+//            for(auto j : valuelist){
+//                QAction* headerAction = new QAction;
+//                headerAction->setObjectName(j.first);
+//                if(i == 0){
+//                    ui->menucomponents->addAction(headerAction);
+//                }
+//                else{
+//                    QAction* parentaction = nullptr;
+//                    for(auto i : ui->menucomponents->actions()){
+//                        if(i->objectName() == j.second){
+//                            parentaction = i;
+//                            break;
+//                        }
+//                    }
+//                    if(!parentaction){
+//                        for(auto i : ui->menucomponents->actions()){
+//                            parentaction = find_action(i, j.first);
+//                            if(parentaction){
+//                                break;
+//                            }
+//                        }
+//                    }
+
+//                    if(!parentaction){
+//                        qDebug() << "not found -_-" << j.first;
+//                    }
+
+//                    QAction* newAction = new QAction;
+//                    newAction->setObjectName(j.first);
+//                    if(parentaction->menu()){
+//                        parentaction->menu()->addAction(newAction);
+//                    }else{
+//                        parentaction->setMenu(new QMenu(parentaction->parentWidget()));
+//                        parentaction->menu()->addAction(newAction);
+
+//                    }
+
+////                    QList<QAction*> clist = menu()->actions()j.second, Qt::MatchContains|Qt::MatchRecursive, 0);
+////                    if(!clist.empty()){
+////                        clist.at(0)->addChild(headeritem);
+////                    }
+//                }
+//            }
+//        }
+
+//        previous = i;
+//    }
+}

@@ -36,6 +36,13 @@ private slots:
     void on_actioncurved_connection_triggered();
     void on_actionLibrary_Editor_triggered();
 //    void on_actionaction_grid_triggered();
+    void on_actionpassive_triggered();
+    void toolbar_button_action_receiver(QAction*);
+private:
+    QAction* find_action(QAction*, const QString&);
+    void update_component_menu();
+signals:
+    void current_component(Component*);
 };
 
 #endif // MAINWINDOW_H

@@ -69,6 +69,9 @@ void LibEditor::update_treewidget()
     if(!_lib)
     return;
 
+    if(_lib->headers().keys().isEmpty())
+    return;
+
     ui->treeWidget->clear();
     QTreeWidgetItem* rootitem = new QTreeWidgetItem;
     rootitem->setText(0, "components");
@@ -88,7 +91,6 @@ void LibEditor::update_treewidget()
                 if(i == 0){
                     ui->treeWidget->setColumnCount(1);
                     rootitem->addChild(headeritem);
-                    qDebug() << "adding to components" << j.first;
                 }
                 else{
                     QList<QTreeWidgetItem*> clist = ui->treeWidget->findItems(j.second, Qt::MatchContains|Qt::MatchRecursive, 0);
@@ -162,6 +164,8 @@ void LibEditor::update_tableWidget(const QString &component_name)
             QComboBox* comboitem = new QComboBox(this);
             comboitem->addItem(cmp->tri_states_map[cmp->dynamicPropertyNames().at(j) + "_tri_state_active"]);
             ui->right_tableWidgett->setCellWidget(j, 2, comboitem);
+        }else{
+            ui->right_tableWidgett->removeCellWidget(j, 2);
         }
     }
 }
@@ -179,7 +183,13 @@ void LibEditor::on_findButton_clicked()
     dialog_main_button->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/resh.ico"),"Resistor");
     dialog_main_button->add_action(QPixmap("C:/Users/Rob/Documents/diplom_beginning/icons/caph.png"),"Capacitor");
     dialog_main_button->add_action("Inductor");
+    dialog_main_button->update_actions(_lib);
 
+    QScrollArea* m_area = new QScrollArea(find_dialog);
+
+
+//    dialog_main_button->menu()->setStyleSheet("QMenu { menu-scrollable: 1; }");
+//    dialog_main_button->menu()->
     //buttonbox setup
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
                                         | QDialogButtonBox::Cancel, this);
@@ -193,9 +203,12 @@ void LibEditor::on_findButton_clicked()
                SLOT( accept()));
 
     //layout setup
-    dialog_layout->addWidget(dialog_main_button->Actions());
+    m_area->setWidget(dialog_main_button->menu());
+    dialog_layout->addWidget(m_area);
     dialog_layout->addWidget(buttonBox);
     find_dialog->setLayout(dialog_layout);
+//    find_dialog->setMaximumWidth(250);
+    find_dialog->resize(183, 200);
 
     switch(find_dialog->exec()){
     case 0:{
@@ -317,8 +330,11 @@ void LibEditor::on_removeButton_clicked()
         if(ui->treeWidget->currentItem()->whatsThis(0) == "editable_component"){
             _lib->remove_component(current);
         }
-        ui->treeWidget->currentItem()->parent()->removeChild(ui->treeWidget->currentItem());
 
+        if(ui->treeWidget->currentItem()->whatsThis(0) == "editable_header"){
+            _lib->remove_header(current);
+        }
+        ui->treeWidget->currentItem()->parent()->removeChild(ui->treeWidget->currentItem());
         //command queue << remove whatisthis
         //undo redo add whatisthis
         return;
@@ -335,6 +351,11 @@ void LibEditor::on_removeButton_clicked()
 
             _lib->remove_component(current);
         }
+
+        if(ui->treeWidget->currentItem()->whatsThis(0) == "editable_header"){
+            _lib->remove_header(current);
+        }
+
         ui->treeWidget->currentItem()->parent()->removeChild(ui->treeWidget->currentItem());
 
 //        ui->treeWidget->removeItemWidget(ui->treeWidget->currentItem(), 0);
@@ -380,7 +401,7 @@ void LibEditor::addButton_addheader_clicked()
                 duplicateWarn->exec();
                 return;
             }
-            qDebug() << "adding " << i << ", to " << ui->treeWidget->currentItem()->text(0);
+//            qDebug() << "adding " << i << ", to " << ui->treeWidget->currentItem()->text(0);
             if(ui->treeWidget->currentItem()->parent()){
                 _lib->add_header(i, ui->treeWidget->currentItem()->text(0));
             }else{
@@ -405,6 +426,16 @@ void LibEditor::addButton_addelement_clicked()
     if(!ui->treeWidget->currentItem() || !_lib || !ui->treeWidget->currentItem()->parent())
         return;
 
+    if(ui->treeWidget->currentItem()->whatsThis(0) == "editable_component"){
+        QMessageBox* duplicateWarn = new QMessageBox(this);
+        duplicateWarn->deleteLater();
+        duplicateWarn->setIcon(QMessageBox::Warning);
+        duplicateWarn->setText("Adding element to other element is not allowed!");
+        duplicateWarn->setWindowTitle("Warning");
+        duplicateWarn->addButton("Ok", QMessageBox::AcceptRole);
+        duplicateWarn->exec();
+        return;
+    }
     //open qdialog with empty component properties unparsed
     QDialog* add_element_dialog = new QDialog(this);
     QGridLayout* add_dialog_layout = new QGridLayout(add_element_dialog);
@@ -424,9 +455,9 @@ void LibEditor::addButton_addelement_clicked()
     QGraphicsView* view = new QGraphicsView(add_element_dialog);
 
     view->setScene(scene);
-    view->setFixedSize(QSize(100, 100));
+    view->setFixedSize(QSize(150, 150));
 
-    scene->setSceneRect(QRectF(0,0, 90,90));
+    scene->setSceneRect(QRectF(0,0, 140,140));
     scene->addItem(component_instance);
     scene->addItem(mode);
     component_instance->moveBy(40,40);

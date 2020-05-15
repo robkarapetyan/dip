@@ -21,6 +21,22 @@ Component::Component(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 }
 
+Component::Component(const Component &other)
+{
+    for( auto i : other.vec_of_pins){
+        add_pin(i->pos().x(), i->pos().y());
+    }
+    tri_states_map = other.tri_states_map;
+
+    for(auto i : other.dynamicPropertyNames()){
+        setProperty(i, other.property(i));
+    }
+    set_pixmap(other.icon_path());
+    this->setFlag(ItemIsMovable);
+    this->pic->setFlag(ItemIgnoresParentOpacity);
+    this->pic->setParentItem(this);
+}
+
 Component::~Component()
 {
 }
