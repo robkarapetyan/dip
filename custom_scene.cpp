@@ -22,7 +22,6 @@ Custom_scene::~Custom_scene()
 
 void Custom_scene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
 //    if(itemAt(event->pos().rx(),event->pos().ry(),QTransform()))
 //    {
 //        QList<QGraphicsItem *>  a = this->items(); // trying to access items this way,works >> causes type loss

@@ -162,7 +162,13 @@ void LibEditor::update_tableWidget(const QString &component_name)
          //also state :: e.g  mOhm Ohm MOhm
         if(cmp->tri_states_map.contains(cmp->dynamicPropertyNames().at(j) + "_tri_state")){
             QComboBox* comboitem = new QComboBox(this);
-            comboitem->addItem(cmp->tri_states_map[cmp->dynamicPropertyNames().at(j) + "_tri_state_active"]);
+
+            QStringList state_list = cmp->tri_states_map[cmp->dynamicPropertyNames().at(j) + "_tri_state"].split(",");
+
+            for(auto i : state_list){
+                comboitem->addItem(i);
+            }
+//            comboitem->addItem(cmp->tri_states_map[cmp->dynamicPropertyNames().at(j) + "_tri_state_active"]);
             ui->right_tableWidgett->setCellWidget(j, 2, comboitem);
         }else{
             ui->right_tableWidgett->removeCellWidget(j, 2);
@@ -292,6 +298,8 @@ void LibEditor::on_editButton_clicked()
 
 void LibEditor::editButton_text_receiver()
 {
+    _lib->rename_header(ui->treeWidget->currentItem()->text(0), editButton_lineedit->text());
+
     ui->treeWidget->currentItem()->setText(0, editButton_lineedit->text());
 //   qDebug() <<  ui->editButton->menu()->defaultAction()->text();
 //    qDebug() << ui->treeWidget->currentItem()->whatsThis(0);
@@ -299,7 +307,7 @@ void LibEditor::editButton_text_receiver()
 }
 
 //remove action
-//completed removal from lib done
+//completed removal from lib
 void LibEditor::on_removeButton_clicked()
 {
     if(!ui->treeWidget->currentItem() || !_lib || !ui->treeWidget->currentItem()->parent())

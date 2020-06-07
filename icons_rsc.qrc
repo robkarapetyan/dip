@@ -21,5 +21,12 @@
         <file>icons/grid2.png</file>
         <file>icons/grid3.png</file>
         <file>icons/grid4.png</file>
+        <file>icons/gnd.png</file>
+        <file>icons/grab.jpg</file>
+        <file>icons/grab1.png</file>
+        <file>icons/pointer.png</file>
+        <file>icons/zin.png</file>
+        <file>icons/zout.png</file>
+        <file>icons/play.png</file>
     </qresource>
 </RCC>

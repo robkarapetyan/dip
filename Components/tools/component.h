@@ -27,6 +27,7 @@ class Pin : public QGraphicsRectItem
 public:
     //Pin() = default;
     Pin();
+//    Pin(const Pin& other);
     ~Pin();
     void contextMenuEvent(QGraphicsSceneContextMenuEvent * event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -35,9 +36,14 @@ public:
 
     void add_line(QGraphicsItem*);
     void remove_line(QGraphicsItem*);
+    QString getSignature() const;
+    void setSignature(const QString &value);
+
 protected:
     QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
     QVector<QGraphicsItem*> vec_of_connections = {};
+private:
+    QString signature = "none";
 };
 
 
@@ -66,7 +72,7 @@ public:
     Component(QGraphicsObject * parent = nullptr);
     Component(const Component& other);
 
-    ~Component() override;
+    ~Component();
 
     void add_pin(const qreal &x, const qreal &y);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -82,6 +88,8 @@ public:
     void block_pin_moving();
     //test
     void signal_test(int a);
+
+    QString get_spice_form();
 
 public slots:
     void rotate(int angle);

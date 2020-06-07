@@ -36,6 +36,8 @@ QVariant OrtogonalLineItem::itemChange(QGraphicsItem::GraphicsItemChange change,
     if(change == QGraphicsItem::ItemPositionChange){
         if(orient == Qt::Orientation::Horizontal){
             if(previous_sibling){
+//                qDebug() << "parent " << this;
+
 //                previous_sibling->setFlag(itemd)
 //                qDebug() << value.toPointF().y() << "this scenepos";
 //                qDebug() << previous_sibling->line().p2().ry()  << "this sceneposssssss";
@@ -56,6 +58,15 @@ QVariant OrtogonalLineItem::itemChange(QGraphicsItem::GraphicsItemChange change,
             return QPointF(pos().x(), value.toPointF().y());
         }
         else{
+            if(previous_sibling && next_sibling){
+//                this->p
+                previous_sibling->setLine(previous_sibling->line().p1().rx(),
+                                          previous_sibling->line().p1().ry(),
+                                         mapFromParent(this->pos()).rx(),
+                                        previous_sibling->line().p2().ry());
+            }
+//            qDebug() << "parent " << this;
+//            qDebug() << "next" << next_sibling;
 
             return QPointF(value.toPointF().x(), pos().y());
         }

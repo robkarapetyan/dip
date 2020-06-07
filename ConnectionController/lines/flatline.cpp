@@ -21,10 +21,11 @@ void FlatLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu * menu  = new QMenu;
     menu->setAttribute(Qt::WA_DeleteOnClose, true);
-    menu->addAction("Make Ortogonal");
-    menu->addAction("Properties");
+//    menu->addAction("Make Ortogonal");
+//    menu->addAction("Properties");
     menu->addAction("Delete");
     menu->exec(event->screenPos());
+    QGraphicsItem::contextMenuEvent(event);
 }
 
 void FlatLine::hoverEnterEvent(QGraphicsSceneHoverEvent *)

@@ -7,10 +7,9 @@ ILine::ILine(Pin* a, Pin* b):start(a), end(b)
 
 QRectF ILine::boundingRect() const
 {
-    if(!this->childItems().empty()){
-        return childItems().at(0)->boundingRect();
-    }
-    qDebug() << "aaa";
+//    if(!this->childItems().empty()){
+//        return childItems().at(0)->boundingRect();
+//    }
     return childrenBoundingRect();
 }
 

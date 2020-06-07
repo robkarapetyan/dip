@@ -25,6 +25,7 @@ public:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    QStringList get_spice();
     ActiveMode mode = ActiveMode::none;
 //    std::vector<Component*> vec_of_components_p = {};
     void set_to_(const ActiveMode& a);
@@ -42,5 +43,7 @@ private:
     int m_scaling = 100;
 //    QGraphicsItemGroup* gridgroup = nullptr;
     Component* active_component = nullptr;
+public:
+    bool grabFlag = false;
 };
 #endif // M_VIEW_H

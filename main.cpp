@@ -5,7 +5,6 @@
 #include "Components/resistor.h"
 #include "Components/capacitor.h"
 
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

@@ -24,9 +24,8 @@ void M_view::wheelEvent(QWheelEvent *event)
 {
     if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ControlModifier))
     {
-        this->centerOn(mapToScene(event->pos()));
-//        qDebug() << m_scaling;
-        if(event->delta() >= 0){
+       this->centerOn(mapToScene(event->pos()));
+       if(event->delta() >= 0){
            if(m_scaling <= 140){
                emit scaling_sig(m_scaling + 10);
            }
@@ -51,6 +50,10 @@ void M_view::mouseMoveEvent(QMouseEvent *event)
 
 void M_view::mousePressEvent(QMouseEvent *event)
 {
+    if(dragMode() == QGraphicsView::ScrollHandDrag){
+        QGraphicsView::mousePressEvent(event);
+        return;
+    }
 //    auto mainwindowptr = dynamic_cast<MainWindow*>(this->parent()->parent());
     if(QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier) && !itemAt(event->pos()))
     {
@@ -88,8 +91,8 @@ void M_view::mousePressEvent(QMouseEvent *event)
 
 //    qDebug() << this->scene()->items().size();
 //    for (auto i : this->scene()->items()){
-//        if(dynamic_cast<Component*>(i)){
-//            qDebug() << "yes it is component";
+//        if(auto jj = dynamic_cast<Component*>(i)){
+//            qDebug() << "yes it is component" << jj->flags();
 //        }
 //    }
     QGraphicsView::mousePressEvent(event);
@@ -97,7 +100,10 @@ void M_view::mousePressEvent(QMouseEvent *event)
 
 void M_view::mouseReleaseEvent(QMouseEvent *event)
 {
-    setDragMode(QGraphicsView::NoDrag);
+    if(!QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier) && !grabFlag)
+    {
+        setDragMode(QGraphicsView::NoDrag);
+    }
     QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -105,6 +111,21 @@ void M_view::resizeEvent(QResizeEvent *event)
 {
 
     QGraphicsView::resizeEvent(event);
+}
+
+QStringList M_view::get_spice()
+{
+    QStringList stlist = {};
+    for ( auto i : scene()->items()){
+        Component* cmp = dynamic_cast<Component*>(i);
+        if(cmp){
+            if(cmp->property("spice_form").isValid() && cmp->property("spice_form").toString() != "")
+            {
+                stlist.push_back(cmp->get_spice_form());
+            }
+        }
+    }
+    return stlist;
 }
 
 void M_view::set_to_(const ActiveMode &a)
@@ -136,12 +157,14 @@ void M_view::set_to_(const ActiveMode &a)
 //        gridgroup->setVisible(false);
 //}
 
+
+
+//-------------------------------- slots ----------------------
+
 void M_view::add_received_lineItem(QGraphicsItem *a)
 {
     this->scene()->addItem(a);
 }
-
-//-------------------------------- slots ----------------------
 
 void M_view::change_scale(int new_val)
 {
@@ -155,14 +178,14 @@ void M_view::change_scale(int new_val)
     }
 }
 
-//make it work with lib
-//-- to hold a pointer to object of active type
-//and give return copy of it every time it is needed
 void M_view::component_received(Component *cmp)
 {
     if(cmp){
         set_to_(ActiveMode::component);
         active_component = cmp;
+        if(cmp->objectName() == "ground"){
+            active_component->vec_of_pins[0]->setSignature("0");
+        }
     }
     /*if (!action->isSeparator() && !action->isWidgetType())
     {

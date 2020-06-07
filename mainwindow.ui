@@ -97,7 +97,7 @@
     </property>
     <widget class="QMenu" name="menuexport">
      <property name="title">
-      <string>export</string>
+      <string>Export</string>
      </property>
      <addaction name="actionLib"/>
      <addaction name="actionSVG"/>
@@ -105,7 +105,7 @@
     </widget>
     <widget class="QMenu" name="menuimport">
      <property name="title">
-      <string>import</string>
+      <string>Import</string>
      </property>
      <addaction name="actionLib_2"/>
     </widget>
@@ -114,6 +114,8 @@
     <addaction name="separator"/>
     <addaction name="menuexport"/>
     <addaction name="menuimport"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuffd">
     <property name="title">
@@ -126,7 +128,7 @@
     <addaction name="separator"/>
     <addaction name="actionPreferences"/>
    </widget>
-   <widget class="QMenu" name="menucomponents">
+   <widget class="ComponentMenu" name="menucomponents">
     <property name="title">
      <string>components</string>
     </property>
@@ -142,16 +144,28 @@
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Tools</string>
+     <string>tools</string>
     </property>
+    <widget class="QMenu" name="menuSimulation">
+     <property name="title">
+      <string>Simulation</string>
+     </property>
+     <addaction name="actionRun"/>
+     <addaction name="actionopen_sp_file"/>
+    </widget>
     <addaction name="actionLibrary_Editor"/>
     <addaction name="separator"/>
-    <addaction name="actionOptions"/>
+    <addaction name="menuSimulation"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionOptions_2"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>help</string>
     </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionNGspice_user_manual"/>
    </widget>
    <addaction name="menuff"/>
    <addaction name="menuffd"/>
@@ -223,6 +237,44 @@
    </attribute>
    <addaction name="actionaction_undo"/>
    <addaction name="actionaction_redo"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_4">
+   <property name="windowTitle">
+    <string>toolBar_4</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actiongrab"/>
+   <addaction name="actionpoint"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_5">
+   <property name="windowTitle">
+    <string>toolBar_5</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionzoomin"/>
+   <addaction name="actionzoomout"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_6">
+   <property name="windowTitle">
+    <string>toolBar_6</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRun"/>
   </widget>
   <action name="actiona1k">
    <property name="text">
@@ -371,6 +423,79 @@
     <string>smtg</string>
    </property>
   </action>
+  <action name="actiongrab">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/grab1.png</normaloff>:/icons/grab1.png</iconset>
+   </property>
+   <property name="text">
+    <string>grab</string>
+   </property>
+  </action>
+  <action name="actionpoint">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/pointer.png</normaloff>:/icons/pointer.png</iconset>
+   </property>
+   <property name="text">
+    <string>point</string>
+   </property>
+  </action>
+  <action name="actionzoomin">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/zin.png</normaloff>:/icons/zin.png</iconset>
+   </property>
+   <property name="text">
+    <string>zoomin</string>
+   </property>
+  </action>
+  <action name="actionzoomout">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/zout.png</normaloff>:/icons/zout.png</iconset>
+   </property>
+   <property name="text">
+    <string>zoomout</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset resource="icons_rsc.qrc">
+     <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+  </action>
+  <action name="actionopen_sp_file">
+   <property name="text">
+    <string>open .sp file</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionOptions_2">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionNGspice_user_manual">
+   <property name="text">
+    <string>Ngspice user manual</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -383,6 +508,11 @@
    <class>M_spinbox</class>
    <extends>QSpinBox</extends>
    <header>common_files/m_spinbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ComponentMenu</class>
+   <extends>QMenu</extends>
+   <header location="global">common_files/componentmenu.h</header>
   </customwidget>
  </customwidgets>
  <resources>

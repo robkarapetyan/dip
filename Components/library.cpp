@@ -275,6 +275,7 @@ bool Library::add_header(const QString &name, const QString &parent = "")
 
 bool Library::remove_header(const QString &name)
 {
+    //also delete all component of header's children
     if(!lib_json_doc){
         qWarning("No library file detected");
         return false;
@@ -315,16 +316,41 @@ bool Library::rename_header(const QString &old_name, const QString &new_name)
 
     //header rename
     QJsonObject rootobj = lib_json_doc->object();
+    QJsonObject headersobj = rootobj["Headers"].toObject();
 
-    if(!rootobj["Headers"].toObject().keys().contains(old_name)
+    if(!headersobj.keys().contains(old_name)
             || new_name == ""){
         return false;
     }
 
-    QJsonObject subRoot = rootobj["Headers"].toObject()[old_name].toObject();
-    rootobj["Headers"].toObject().remove(old_name);
+    QJsonObject subRoot = headersobj[old_name].toObject();
+    headersobj.remove(old_name);
 
-    rootobj["Headers"].toObject()[new_name] = subRoot;
+    headersobj[new_name] = subRoot;
+
+    rootobj["Headers"] = headersobj;
+
+    //rename all old head element's parent with new head
+    for (auto i : rootobj.keys()){
+        if(i == "Headers"){
+            continue;
+        }
+        QJsonObject a = rootobj[i].toObject();
+        QJsonObject current = a["properties"].toObject();
+
+        qDebug() << i;
+
+        if(current["head"].toString() == old_name){
+            qDebug() << "old- " << old_name << ", new- " << new_name;
+            current["head"] = new_name;
+        }
+
+        a["properties"] = current;
+        rootobj[i] = a;
+    }
+    //---------------------------------------------------
+
+    lib_json_doc->setObject(rootobj);
 
     QFile saveFile(libPath);
     if (!saveFile.open(QIODevice::WriteOnly)) {

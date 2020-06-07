@@ -15,6 +15,11 @@ void Connection_controller::add_item(ILine * line)
     emit item_created(line);
 }
 
+QVector<ILine*> Connection_controller::get_lines() const
+{
+    return vec_of_lines;
+}
+
 //void Connection_controller::remove_item(ILine *)
 //{
 
@@ -63,6 +68,7 @@ void Connection_controller::receiving_pin(Pin *a)
             }else if(mode == ConnectionMode::polyline){
                 ILine* line = new OrtogonalLine(pin1,pin2);
 
+                line->setPos(pin1->scenePos());
                 line->setLine(pin1->scenePos().rx(),pin1->scenePos().ry(), pin2->scenePos().rx(), pin2->scenePos().ry());
                 pin1->add_line(line);
                 pin2->add_line(line);
@@ -70,6 +76,45 @@ void Connection_controller::receiving_pin(Pin *a)
                 vec_of_lines.push_back(line);
                 emit item_created(line);
             }
+
+//            qDebug() << "pin1 signature" << pin1->parentItem();
+//            qDebug() << "pin2 signature" << pin2->getSignature();
+
+            {
+                bool flag1 = false;
+                pin1->getSignature().toInt(&flag1);
+
+                bool flag2 = false;
+                pin1->getSignature().toInt(&flag2);
+                if(flag1 && flag2){
+                    qWarning() << "short circuit";
+                    return;
+                }else if(flag1){
+                    pin2->setSignature(pin1->getSignature());
+                }else{
+                    pin1->setSignature(pin2->getSignature());
+                }
+
+            }
+//            qDebug() << "after";
+//            qDebug() << "pin1 signature" << pin1->getSignature();
+//            qDebug() << "pin2 signature" << pin2->getSignature();
+
+            if(pin1->getSignature() == "none" &&  pin2->getSignature() == "none"){
+                signatures.push_back("n" + QString::number(signatures.size()));
+                pin1->setSignature(signatures[signatures.size() - 1]);
+                pin2->setSignature(signatures[signatures.size() - 1]);
+            }
+            else if(pin1->getSignature() == "none"){
+                pin1->setSignature(pin2->getSignature());
+            }
+            else if(pin2->getSignature() == "none"){
+                pin2->setSignature(pin1->getSignature());
+            }
+//            qDebug() << "after1111";
+//            qDebug() << "pin1 signature" << pin1->getSignature();
+//            qDebug() << "pin2 signature" << pin2->getSignature();
+
 
         }
     } catch (const std::invalid_argument& a) {

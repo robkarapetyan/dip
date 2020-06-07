@@ -23,8 +23,10 @@ Component::Component(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 Component::Component(const Component &other)
 {
-    for( auto i : other.vec_of_pins){
-        add_pin(i->pos().x(), i->pos().y());
+    setObjectName(other.objectName());
+    for( int i = 0; i < other.vec_of_pins.size(); ++i){
+        add_pin(other.vec_of_pins[i]->pos().x(), other.vec_of_pins[i]->pos().y());
+        vec_of_pins[i]->setSignature(other.vec_of_pins[i]->getSignature());
     }
     tri_states_map = other.tri_states_map;
 
@@ -118,6 +120,61 @@ void Component::block_pin_moving()
     }
 }
 
+QString Component::get_spice_form()
+{
+    QString form_property = property("spice_form").toString();
+
+    if(form_property == "")
+        return "";
+    QStringList tokenList = form_property.split(" ");
+
+    QString a;
+    QTextStream spice_string(&a);
+
+    bool previousWasPlus = false;
+    for( auto i : tokenList){
+        if(i.contains("'", Qt::CaseSensitivity::CaseSensitive)){
+            i.remove("'", Qt::CaseSensitivity::CaseSensitive);
+        }
+        if(i == "+"){
+            previousWasPlus = true;
+            continue;
+        }
+
+        //if i is int... "pin index"
+        bool flag = false;
+        int pin_index = i.toInt(&flag);
+
+        if(flag){
+            if(pin_index < vec_of_pins.size()){
+                spice_string << " " + vec_of_pins[pin_index]->getSignature();
+            }
+            continue;
+        }
+
+        //if i is property name
+        if(property(i.toUtf8()).isValid()){
+            if(previousWasPlus){
+                spice_string << property(i.toUtf8()).toString();
+                previousWasPlus = false;
+            }else{
+                spice_string << " " + property(i.toUtf8()).toString();
+            }
+            continue;
+        }
+
+        //i is just a label
+        if(previousWasPlus){
+            spice_string << i;
+            previousWasPlus = false;
+        }else{
+            spice_string << " " + i;
+        }
+    }
+
+    return a;
+}
+
 
 //--------------------------- PIN ----------------------------------
 
@@ -128,6 +185,11 @@ Pin::Pin(){
     this->setAcceptHoverEvents(true);
     setFlag(ItemSendsScenePositionChanges);
 }
+
+//Pin::Pin(const Pin &other)
+//{
+
+//}
 
 Pin::~Pin()
 {
@@ -194,6 +256,7 @@ QVariant Pin::itemChange(QGraphicsItem::GraphicsItemChange change, const QVarian
             }
             if(auto j = dynamic_cast<OrtogonalLine*>(i)){
                 if(j->start == this){
+                    j->setPos(this->scenePos());
                     j->setLine(value.toPointF().x(), value.toPointF().y(), j->end->scenePos().x(), j->end->scenePos().y());
                 }
                 if(j->end == this){
@@ -208,6 +271,24 @@ QVariant Pin::itemChange(QGraphicsItem::GraphicsItemChange change, const QVarian
     return QGraphicsRectItem::itemChange(change,value);
 }
 
+QString Pin::getSignature() const
+{
+    return signature;
+}
+
+void Pin::setSignature(const QString &value)
+{
+    signature = value;
+    for (auto i : vec_of_connections){
+        auto j = dynamic_cast<ILine*>(i);
+        if(j->start == this && j->end->getSignature() != getSignature()){
+            j->end->setSignature(value);
+        }
+        if(j->end == this && j->start->getSignature() != getSignature()){
+            j->start->setSignature(value);
+        }
+    }
+}
 
 
 //---------------------------- Pixmap------------------------------
@@ -239,7 +320,7 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
         txf.rotate(a, Qt::ZAxis);
         txf.translate(0,0);
         this->setTransform(txf, true);
-
+        parentptr->get_spice_form();
 
         if(parentptr->property("rotation_angle").toInt() != 270)
             parentptr->setProperty("rotation_angle", parentptr->property("rotation_angle").toInt() + 90);
@@ -249,7 +330,17 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
     });
     connect(act2, &QAction::triggered, [this](){
         //this->scene()->removeItem(this->parentItem());
+//        qDebug() << "before";
+
+
         this->parentptr->~Component();
+
+
+//        parentptr = nullptr;
+//        qDebug() << parentItem();
+//        qDebug() << "after";
+
+        return;
     });
     connect(act3, &QAction::triggered, [this, act1](){
         QDialog* contextmenu_dialog = new QDialog;
@@ -263,16 +354,19 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
         tablewidget1->setRowCount(parentptr->dynamicPropertyNames().size());
 
         connect(tablewidget1, &QTableWidget::cellChanged, [this, tablewidget1, act1](int row, int column){
-            qDebug() << parentptr->dynamicPropertyNames().at(column - 1);
-            qDebug() << tablewidget1->item(row,column)->data(Qt::DisplayRole);
-            if(parentptr->dynamicPropertyNames().at(column - 1) == "rotation_angle"){
+//            qDebug() << parentptr->dynamicPropertyNames().at(column - 1);
+//            qDebug() << tablewidget1->item(row,column)->data(Qt::DisplayRole);
+            if(parentptr->dynamicPropertyNames().at(row) == "rotation_angle"){
                 act1->trigger();
             }
-            parentptr->setProperty(parentptr->dynamicPropertyNames().at(column - 1), tablewidget1->item(row,column)->data(Qt::DisplayRole));
+            parentptr->setProperty(parentptr->dynamicPropertyNames().at(row), tablewidget1->item(row,column)->data(Qt::DisplayRole));
         });
         tablewidget1->blockSignals(true);
         for( int i = 0; i < parentptr->dynamicPropertyNames().size(); ++i){
             QTableWidgetItem* nameitem1 = new QTableWidgetItem();
+
+
+
             nameitem1->setData(Qt::ItemDataRole::DisplayRole,
                                parentptr->dynamicPropertyNames().at(i));
             tablewidget1->setItem(i, 0, nameitem1);
@@ -304,11 +398,11 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
 
                     int old_index = comboitem->findText(old_text);
                     int new_index = comboitem->currentIndex();
-                    if(old_index > new_index){
+                    if(old_index < new_index){
                         parentptr->setProperty(parentptr->dynamicPropertyNames().at(i), parentptr->property(parentptr->dynamicPropertyNames().at(i)).toDouble() / 1000);
                         tablewidget1->item(i, 1)->setData(Qt::DisplayRole, tablewidget1->item(i, 1)->data(Qt::DisplayRole).toDouble() / 1000);
                     }
-                    if(old_index < new_index){
+                    if(old_index > new_index){
                         parentptr->setProperty(parentptr->dynamicPropertyNames().at(i), parentptr->property(parentptr->dynamicPropertyNames().at(i)).toDouble() * 1000);
                         tablewidget1->item(i, 1)->setData(Qt::DisplayRole, tablewidget1->item(i, 1)->data(Qt::DisplayRole).toDouble() * 1000);
                     }
