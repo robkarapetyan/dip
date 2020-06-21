@@ -39,9 +39,9 @@ public:
     QString getSignature() const;
     void setSignature(const QString &value);
 
+    QVector<QGraphicsItem*> vec_of_connections = {};
 protected:
     QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
-    QVector<QGraphicsItem*> vec_of_connections = {};
 private:
     QString signature = "none";
 };
@@ -91,12 +91,14 @@ public:
 
     QString get_spice_form();
 
+    QGraphicsSimpleTextItem* textitem = nullptr;
 public slots:
     void rotate(int angle);
 
 signals:
     void pin_hover_signal(Pin*);
 
+    void remove_signal(Component*);
 protected:
     M_pixmap * pic = new M_pixmap(this);
 

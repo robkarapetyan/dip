@@ -7,9 +7,11 @@
 #include <QStringRef>
 #include <QSpinBox>
 #include <QGraphicsSvgItem>
+#include <QColorDialog>
 #include <QFile>
 #include <QDebug>
 #include <QString>
+#include <QRadioButton>
 #include <QFileDialog>
 #include <QDomDocument>
 
@@ -70,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
     update_component_menu();
     connect(this, SIGNAL( current_component(Component*)), ui->graphicsView,
             SLOT(component_received(Component *)));
+
 }
 
 MainWindow::~MainWindow()
@@ -144,8 +147,11 @@ void MainWindow::on_actionSave_triggered()
 
             if(dynamic_cast<FlatLine*>(i)){
                 line.setAttribute("type", "flat");
-            }else{
+            }else if (dynamic_cast<OrtogonalLine*>(i)){
                 line.setAttribute("type", "orthogonal");
+            }
+            else if(!i){
+                continue;
             }
             start.setAttribute("x", i->start->scenePos().rx());
             start.setAttribute("y", i->start->scenePos().ry());
@@ -186,7 +192,9 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
+    ui->graphicsView->conncontroller->ports.clear();
 
+    ui->graphicsView->names_map.clear();
     QString newPath = QFileDialog::getOpenFileName(this, "Open SVG",
                                                         current_file, tr("SVG files (*.svg)"));
     if (newPath.isEmpty())
@@ -347,6 +355,13 @@ void MainWindow::toolbar_button_action_receiver(QAction *act)
     if(lib->lib_has(act->text())){
         emit current_component(lib->lib_has(act->text()));
     }
+
+    if(ui->toolBar->actions().size() == 3){
+
+        ui->toolBar->removeAction(ui->toolBar->actions().at(2));
+    }
+    ui->toolBar->insertAction(ui->toolBar->actions().first(), act);
+
 }
 
 void MainWindow::update_component_menu()
@@ -570,3 +585,91 @@ void MainWindow::on_actionopen_sp_file_triggered()
 //    openPath(path.left(path.lastIndexOf("/")));
 //#endif
 //}
+
+void MainWindow::on_actionaction_undo_triggered()
+{
+    ui->graphicsView->actcontroller->undo();
+}
+
+void MainWindow::on_actionaction_redo_triggered()
+{
+    ui->graphicsView->actcontroller->redo();
+}
+
+void MainWindow::on_actiona1k_triggered()
+{
+    ui->graphicsView->actcontroller->undo();
+}
+
+void MainWindow::on_actionredo_triggered()
+{
+    ui->graphicsView->actcontroller->redo();
+}
+
+
+void MainWindow::on_actionOptions_triggered()
+{
+
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+     QDialog* set_prefs_dialog = new QDialog(this);
+     set_prefs_dialog->setWindowTitle("Preferences");
+
+
+     QVBoxLayout* pref_layout = new QVBoxLayout;
+
+     QPushButton* button = new QPushButton;
+     QLabel* label = new QLabel("Set background color : ");
+     QHBoxLayout* vlay = new QHBoxLayout;
+
+     vlay->addWidget(label);
+     vlay->addWidget(button);
+
+     connect(button, &QPushButton::clicked, [this](){
+         QColorDialog* m_dialog = new QColorDialog(this);
+         QColor background_color = m_dialog->getColor();
+         ui->graphicsView->setBackgroundBrush(background_color);
+
+     });
+
+     QRadioButton* radbut1 = new QRadioButton;
+     radbut1->setText("Hide port signatures");
+
+     QRadioButton* radbut2 = new QRadioButton;
+     radbut2->setText("Hide component names");
+
+     pref_layout->addLayout(vlay);
+     pref_layout->addWidget(radbut1);
+     pref_layout->addWidget(radbut2);
+
+     set_prefs_dialog->setLayout(pref_layout);
+
+     switch(set_prefs_dialog->exec()){
+     case 0:{
+
+     break;
+     }
+     case 1:{
+
+         if(radbut1->isChecked()){
+             if(!ui->graphicsView->conncontroller->ports.isEmpty()){
+                for(auto i : ui->graphicsView->conncontroller->ports){
+//                    i->s
+                }
+             }
+         }
+     break;
+     }
+     default:
+         break;
+     }
+}
+
+
+
+void MainWindow::on_actionFind_triggered()
+{
+
+}

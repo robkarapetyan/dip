@@ -1,15 +1,21 @@
 #include "m_view.h"
 #include "Components/resistor.h"
 #include <QDebug>
+#include <QPair>
 #include <QGuiApplication>
 #include "Components/tools/component.h"
 #include "Components/tools/port.h"
 #include "mainwindow.h"
+#include "Tools/ActionController/actions/act.h"
+#include "Tools/ActionController/actions/actionadd.h"
+//#include "Tools/ActionController/actions/actionremove.h"
+
 
 M_view::M_view(QWidget *parent):QGraphicsView(parent)
 {
     conncontroller = new Connection_controller(this);
     connect(conncontroller, SIGNAL(item_created(QGraphicsItem*)), this, SLOT(add_received_lineItem(QGraphicsItem*)));
+    actcontroller = new ActionController;
 }
 
 M_view::~M_view()
@@ -69,7 +75,23 @@ void M_view::mousePressEvent(QMouseEvent *event)
                      QPointF pt = mapToScene(event->pos());
                      Component* cmp = new Component(*active_component);
                      cmp->setPos(pt.x() - 12,pt.y() - 12);
-                     this->scene()->addItem(cmp);
+
+                     M_Action* add_act = new ActionAdd(cmp, this);
+                     actcontroller->Do(add_act);
+
+                     QString key = cmp->get_spice_form().split(" ").front().remove("'",Qt::CaseSensitive);
+
+                     QVector<QString> vector = names_map[key];
+
+                     if(vector.isEmpty()){
+                         vector.push_back(QString(vector.size()));
+                         names_map.insert(key,vector);
+                     }else{
+                         names_map[key].push_back(QString(names_map[key].size()));
+                     }
+                     cmp->setProperty("name", QString::number(names_map[key].size()));
+//                     this->scene()->addItem(cmp);
+                     connect(cmp, SIGNAL(remove_signal(Component*)), this, SLOT(remove_component_slot(Component*)));
                      connect(cmp, SIGNAL(pin_hover_signal(Pin*)), conncontroller, SLOT(receiving_pin(Pin *) ));
                  }
                  break;
@@ -210,4 +232,10 @@ void M_view::component_received(Component *cmp)
             // switching state of (graphicsView->comp) to (Components::none);
         }
     }*/
+}
+
+void M_view::remove_component_slot(Component *cmp)
+{
+    M_Action* remove_act = new ActionRemove(cmp, this);
+    actcontroller->Do(remove_act);
 }

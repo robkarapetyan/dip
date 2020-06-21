@@ -37,6 +37,8 @@ Component::Component(const Component &other)
     this->setFlag(ItemIsMovable);
     this->pic->setFlag(ItemIgnoresParentOpacity);
     this->pic->setParentItem(this);
+    textitem = new QGraphicsSimpleTextItem;
+
 }
 
 Component::~Component()
@@ -247,10 +249,12 @@ QVariant Pin::itemChange(QGraphicsItem::GraphicsItemChange change, const QVarian
         for (auto i : vec_of_connections){
             if(auto j = dynamic_cast<FlatLine*>(i)){
                 if(j->start == this){
-                    j->setLine(value.toPointF().x(), value.toPointF().y(), j->end->scenePos().x(), j->end->scenePos().y());
+                    j->setLine(value.toPointF().x() + 3, value.toPointF().y() + 3,
+                               j->end->scenePos().x() + 3, j->end->scenePos().y() + 3);
                 }
                 if(j->end == this){
-                    j->setLine(j->start->scenePos().x(), j->start->scenePos().y(), value.toPointF().x(), value.toPoint().y());
+                    j->setLine(j->start->scenePos().x() + 3, j->start->scenePos().y() + 3,
+                               value.toPointF().x() + 3, value.toPoint().y() + 3);
 
                 }
             }
@@ -333,7 +337,7 @@ void Component::M_pixmap::contextMenuEvent(QGraphicsSceneContextMenuEvent * even
 //        qDebug() << "before";
 
 
-        this->parentptr->~Component();
+        emit this->parentptr->remove_signal(this->parentptr);
 
 
 //        parentptr = nullptr;

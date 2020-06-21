@@ -37,12 +37,13 @@ SOURCES += \
         ConnectionController/lines/ortogonalline.cpp \
         Toolbar_elements/m_button.cpp \
         Tools/ActionController/actioncontroller.cpp \
-        Tools/ActionController/actions/action.cpp \
+        Tools/ActionController/actions/act.cpp \
         Tools/ActionController/actions/actionadd.cpp \
         Tools/ActionController/actions/actionmove.cpp \
         Tools/ActionController/actions/actionremove.cpp \
         Tools/LibraryEditor/libeditor.cpp \
         common_files/componentmenu.cpp \
+        common_files/cyclicchache.cpp \
         common_files/m_spinbox.cpp \
         ConnectionController/connection_controller.cpp \
         custom_scene.cpp \
@@ -53,7 +54,6 @@ SOURCES += \
 HEADERS += \
         Components/capacitor.h \
         Components/library.h \
-        Components/tools/actionmove.h \
         Components/tools/component.h \
         Components/resistor.h \
         Components/tools/port.h \
@@ -64,13 +64,13 @@ HEADERS += \
         ConnectionController/lines/ortogonalline.h \
         Toolbar_elements/m_button.h \
         Tools/ActionController/actioncontroller.h \
-        Tools/ActionController/actions/action.h \
+        Tools/ActionController/actions/act.h \
         Tools/ActionController/actions/actionadd.h \
         Tools/ActionController/actions/actionmove.h \
         Tools/ActionController/actions/actionremove.h \
-        Tools/LibraryEditor/actioncontroller.h \
         Tools/LibraryEditor/libeditor.h \
         common_files/componentmenu.h \
+        common_files/cyclicchache.h \
         common_files/m_spinbox.h \
         ConnectionController/connection_controller.h \
         custom_scene.h \

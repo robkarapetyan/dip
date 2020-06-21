@@ -278,18 +278,346 @@ void LibEditor::on_editButton_clicked()
         return;
     }
 
-    //replace this -----------------------------------------------------------------------------
+    //edit component -----------------------------------------------------------------------------
     if(ui->treeWidget->currentItem()->whatsThis(0) == "editable_component"){
-        bool ok;
-        QString i = QInputDialog::getText(this, tr("Edit component"),
-                                                      tr("component name"), QLineEdit::EchoMode::Normal,
-                                          ui->treeWidget->currentItem()->text(0), &ok);
-        if (ok)
-        {
-           if(i != ""){
-               ui->treeWidget->currentItem()->setText(0, i);
-           }
+//        bool ok;
+//        QString i = QInputDialog::getText(this, tr("Edit component"),
+//                                                      tr("component name"), QLineEdit::EchoMode::Normal,
+//                                          ui->treeWidget->currentItem()->text(0), &ok);
+//        if (ok)
+//        {
+//           if(i != ""){
+//               ui->treeWidget->currentItem()->setText(0, i);
+//           }
+//        }
+
+
+        QDialog* edit_element_dialog = new QDialog(this);
+        QGridLayout* add_dialog_layout = new QGridLayout(edit_element_dialog);
+        edit_element_dialog->deleteLater();
+        edit_element_dialog->setWindowTitle("Add Element to " + ui->treeWidget->currentItem()->text(0));
+        Component* component_instance = _lib->lib_has(ui->treeWidget->currentItem()->text(0));
+
+        QTableWidget* tablewidget1 = new QTableWidget(this);
+        tablewidget1->setColumnCount(3);
+        tablewidget1->setHorizontalHeaderLabels({"name", "value", "state"});
+        tablewidget1->setRowCount(component_instance->dynamicPropertyNames().size());
+
+
+        //---------------------------------------------------------------
+
+        for (int j = 0; j < tablewidget1->rowCount(); ++j){
+            QTableWidgetItem* nameitem = new QTableWidgetItem();
+            nameitem->setData(Qt::ItemDataRole::DisplayRole, component_instance->dynamicPropertyNames().at(j));
+            tablewidget1->setItem(j, 0, nameitem);
+
+            QTableWidgetItem* valueitem = new QTableWidgetItem();
+            valueitem->setData(Qt::ItemDataRole::DisplayRole,
+                               component_instance->property(component_instance->dynamicPropertyNames().at(j)));
+            tablewidget1->setItem(j, 1, valueitem);
+             //also state :: e.g  mOhm Ohm MOhm
+            if(component_instance->tri_states_map.contains(component_instance->dynamicPropertyNames().at(j) + "_tri_state")){
+                QComboBox* comboitem = new QComboBox(this);
+
+                QStringList state_list = component_instance->tri_states_map[component_instance->dynamicPropertyNames().at(j) +
+                        "_tri_state"].split(",");
+
+                for(auto i : state_list){
+                    comboitem->addItem(i);
+                }
+    //            comboitem->addItem(cmp->tri_states_map[cmp->dynamicPropertyNames().at(j) + "_tri_state_active"]);
+                tablewidget1->setCellWidget(j, 2, comboitem);
+            }else{
+                tablewidget1->removeCellWidget(j, 2);
+            }
         }
+        //---------------------------------------------------------------
+
+        connect(tablewidget1, &QTableWidget::cellChanged, [this, tablewidget1, component_instance](int row, int column){
+//            qDebug() << parentptr->dynamicPropertyNames().at(column - 1);
+//            qDebug() << tablewidget1->item(row,column)->data(Qt::DisplayRole);
+            component_instance->setProperty(component_instance->dynamicPropertyNames().at(row), tablewidget1->item(row,column)->data(Qt::DisplayRole));
+        });
+        QGraphicsSimpleTextItem* mode = new QGraphicsSimpleTextItem;
+        mode->setText("Edit mode");
+        mode->setPos(0,0);
+    //    mode->setFlag(ItemIsMovable, false);
+        QGraphicsScene* scene = new QGraphicsScene(edit_element_dialog);
+        QGraphicsView* view = new QGraphicsView(edit_element_dialog);
+
+        view->setScene(scene);
+        view->setFixedSize(QSize(150, 150));
+
+        scene->setSceneRect(QRectF(0,0, 140,140));
+        scene->addItem(component_instance);
+        scene->addItem(mode);
+        component_instance->moveBy(40,40);
+        component_instance->setFlag(QGraphicsObject::ItemIsMovable, false);
+
+        QPushButton* setObjNameButton = new QPushButton(edit_element_dialog);
+        setObjNameButton->setText("Set Component Name");
+        QPushButton* setIconButton = new QPushButton(edit_element_dialog);
+        setIconButton->setText("Set Icon");
+        QPushButton* addPinButton = new QPushButton(edit_element_dialog);
+        addPinButton->setText("Add Pin");
+        QPushButton* removePinButton = new QPushButton(edit_element_dialog);
+        removePinButton->setText("Remove Pin");
+        removePinButton->setCheckable(true);
+        QPushButton* addPropertyButton = new QPushButton(edit_element_dialog);
+        addPropertyButton->setText("Add Property");
+        QPushButton* addMultiStatePropertyButton = new QPushButton(edit_element_dialog);
+        addMultiStatePropertyButton->setText("Add multistate Property");
+        QPushButton* removePropertyButton = new QPushButton(edit_element_dialog);
+        removePropertyButton->setText("Remove selected Property");
+
+        connect(setIconButton, &QPushButton::clicked, [component_instance, this](){
+            QString newPath = QFileDialog::getOpenFileName(this, "Open icon file",
+                                                                QString(), tr("files (*.ico *.png)"));
+            if (newPath.isEmpty())
+                return;
+            component_instance->set_pixmap(newPath);
+        });
+
+        connect(addPinButton, &QPushButton::clicked, [component_instance, removePinButton, mode](){
+            if(removePinButton->isChecked()){
+                removePinButton->setChecked(false);
+                mode->setText("Edit mode");
+                component_instance->blockSignals(true);
+            }
+            component_instance->add_pin(0,0);
+            component_instance->make_pins_movable();
+        });
+
+        connect(setObjNameButton, &QPushButton::clicked, [component_instance, removePinButton, mode, this](){
+            if(removePinButton->isChecked()){
+                removePinButton->setChecked(false);
+                mode->setText("Edit mode");
+                component_instance->blockSignals(true);
+            }
+            bool ok;
+
+            QString i = QInputDialog::getText(this, tr("Set component name"),
+                                                          tr("Component name : "), QLineEdit::EchoMode::Normal, QString(""), &ok);
+            if (ok && i != "")
+            {
+                component_instance->setObjectName(i);
+            }
+        });
+
+        connect(removePinButton, &QPushButton::clicked, [mode, component_instance, scene, removePinButton, this](){
+            if(removePinButton->isChecked()){
+                component_instance->blockSignals(false);
+                mode->setText("Pin remove mode");
+                connect(component_instance, &Component::pin_hover_signal,
+                        [scene] (Pin* pin){
+                    scene->removeItem(pin);
+                });
+            }else{
+                mode->setText("Edit mode");
+                component_instance->blockSignals(true);
+            }
+
+        });
+
+        connect(addPropertyButton, &QPushButton::clicked, [component_instance, removePinButton, mode, tablewidget1, this](){
+            if(removePinButton->isChecked()){
+                removePinButton->setChecked(false);
+                mode->setText("Edit mode");
+                component_instance->blockSignals(true);
+            }
+            QDialog* add_prop_dialog = new QDialog(this);
+    //        add_prop_dialog->deleteLater();
+            QGridLayout* layout1 = new QGridLayout;
+            layout1->addWidget(new QLabel("Property name : ", add_prop_dialog),0,0);
+
+            QLineEdit* prop_name = new QLineEdit(add_prop_dialog);
+            prop_name->setPlaceholderText("name");
+            layout1->addWidget(prop_name, 0,1);
+
+            QDialogButtonBox* buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                                               | QDialogButtonBox::Cancel);
+            connect(buttonbox, &QDialogButtonBox::accepted, add_prop_dialog, &QDialog::accept);
+            connect(buttonbox, &QDialogButtonBox::rejected, add_prop_dialog, &QDialog::reject);
+            layout1->addWidget(buttonbox, 1,0, 1,3);
+
+            add_prop_dialog->setLayout(layout1);
+            switch(add_prop_dialog->exec()){
+            case 0:{
+
+            break;
+            }
+            case 1:{
+                if(prop_name->text() != ""){
+                    component_instance->setProperty(prop_name->text().toUtf8(), 0);
+                    tablewidget1->setRowCount(tablewidget1->rowCount() + 1);
+
+                    QTableWidgetItem* nameitem1 = new QTableWidgetItem();
+                    nameitem1->setData(Qt::ItemDataRole::DisplayRole, prop_name->text());
+                    tablewidget1->setItem(tablewidget1->rowCount() - 1, 0, nameitem1);
+
+                    QTableWidgetItem* valueitem1 = new QTableWidgetItem();
+                    valueitem1->setData(Qt::ItemDataRole::DisplayRole, 0);
+                    tablewidget1->setItem(tablewidget1->rowCount() - 1, 1, valueitem1);
+                }
+            break;
+            }
+            default:
+                break;
+            }
+
+
+        });
+
+        connect(addMultiStatePropertyButton, &QPushButton::clicked, [component_instance, removePinButton, mode, tablewidget1, this](){
+            if(removePinButton->isChecked()){
+                removePinButton->setChecked(false);
+                mode->setText("Edit mode");
+                component_instance->blockSignals(true);
+            }
+            QDialog* add_tristateprop_dialog = new QDialog(this);
+            add_tristateprop_dialog->deleteLater();
+            QGridLayout* layout1 = new QGridLayout;
+            layout1->addWidget(new QLabel("Property name : ", add_tristateprop_dialog),0,0);
+            layout1->addWidget(new QLabel("Property states : ", add_tristateprop_dialog), 1,0);
+            QLineEdit* prop_name = new QLineEdit( add_tristateprop_dialog);
+            QLineEdit* prop_states = new QLineEdit( add_tristateprop_dialog);
+            prop_name->setPlaceholderText("name");
+            prop_states->setPlaceholderText("seperated with ','");
+
+            layout1->addWidget(prop_name, 0,2);
+            layout1->addWidget(prop_states, 1,2);
+
+            QDialogButtonBox* buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                                               | QDialogButtonBox::Cancel);
+            connect(buttonbox, &QDialogButtonBox::accepted, add_tristateprop_dialog, &QDialog::accept);
+            connect(buttonbox, &QDialogButtonBox::rejected, add_tristateprop_dialog, &QDialog::reject);
+    //        add_tristateprop_dialog->
+
+            layout1->addWidget(buttonbox, 2,0, 2,3);
+            add_tristateprop_dialog->setLayout(layout1);
+            switch(add_tristateprop_dialog->exec()){
+            case 0:{
+
+            break;
+            }
+            case 1:{
+                if(prop_name->text() != "" && prop_states->text() != ""){
+                    component_instance->setProperty(prop_name->text().toUtf8(), 0);
+                    component_instance->add_tri_state_prop(prop_name->text(), prop_states->text());
+
+                    tablewidget1->setRowCount(tablewidget1->rowCount() + 1);
+
+                    QTableWidgetItem* nameitem1 = new QTableWidgetItem();
+                    nameitem1->setData(Qt::ItemDataRole::DisplayRole, prop_name->text());
+                    tablewidget1->setItem(tablewidget1->rowCount() - 1, 0, nameitem1);
+
+                    QTableWidgetItem* valueitem1 = new QTableWidgetItem();
+                    valueitem1->setData(Qt::ItemDataRole::DisplayRole, 0);
+                    tablewidget1->setItem(tablewidget1->rowCount() - 1, 1, valueitem1);
+
+                    QComboBox* comboitem = new QComboBox(this);
+                    comboitem->addItem(prop_states->text().split(",").at(0));
+                    tablewidget1->setCellWidget(tablewidget1->rowCount() - 1, 2, comboitem);
+                }
+            break;
+            }
+            default:
+                break;
+            }
+
+
+        });
+
+        QMessageBox* remove_messagebox1 = new QMessageBox(this);
+
+        remove_messagebox1->setIcon(QMessageBox::Warning);
+        remove_messagebox1->setText("If you delete property, you can't \nget back it anymore.Unless you create it again.");
+        remove_messagebox1->setWindowTitle("Warning");
+        remove_messagebox1->setCheckBox(new QCheckBox("Don't show again."));
+        remove_messagebox1->addButton("Cancel", QMessageBox::RejectRole);
+        remove_messagebox1->addButton("Ok", QMessageBox::AcceptRole);
+        remove_messagebox1->checkBox()->setChecked(false);
+
+        connect(removePropertyButton, &QPushButton::clicked, [remove_messagebox1, component_instance, tablewidget1, this](){
+
+            if(!tablewidget1->currentItem()){
+                return;
+            }
+        //        remove_messagebox->deleteLater();
+
+            if(remove_messagebox1->checkBox()->isChecked()){
+                component_instance->setProperty(tablewidget1->item(tablewidget1->currentRow(), 0)->text().toUtf8(), QVariant());
+                component_instance->remove_tri_state_prop(tablewidget1->item(tablewidget1->currentRow(), 0)->text());
+                tablewidget1->removeRow(tablewidget1->currentRow());
+                return;
+            }
+
+            switch(remove_messagebox1->exec()){
+            case 0:{
+                remove_messagebox1->close();
+                break;
+            }
+            case 1:{
+                component_instance->setProperty(tablewidget1->item(tablewidget1->currentRow(), 0)->text().toUtf8(), QVariant());
+                component_instance->remove_tri_state_prop(tablewidget1->item(tablewidget1->currentRow(), 0)->text());
+                tablewidget1->removeRow(tablewidget1->currentRow());
+
+                break;
+            }
+            default:
+                break;
+            }
+        });
+
+        QDialogButtonBox* buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                                           | QDialogButtonBox::Cancel);
+        connect(buttonbox, &QDialogButtonBox::accepted, [component_instance, edit_element_dialog, this]{
+            if(component_instance->objectName() == "" || component_instance->icon_path() == "" ||
+                    component_instance->dynamicPropertyNames().empty()){
+                QMessageBox* b = new QMessageBox(this);
+                b->setIcon(QMessageBox::Warning);
+                b->setText("Some values wasn't set properly!\n check!\tComponent name,\n\t icon,\n\t properties not empty.");
+                b->setWindowTitle("Warning");
+                b->setAttribute(Qt::WA_DeleteOnClose, true);
+                QPushButton* okbutton = b->addButton("Ok", QMessageBox::AcceptRole);
+                b->show();
+                connect(okbutton, &QPushButton::clicked, [b]() {
+                    b->close();
+                });
+            }else{
+                edit_element_dialog->accept();
+            }
+        });
+        connect(buttonbox, &QDialogButtonBox::rejected, edit_element_dialog, &QDialog::reject);
+
+        add_dialog_layout->addWidget(view, 0,0);
+        add_dialog_layout->addWidget(setIconButton, 1,0);
+        add_dialog_layout->addWidget(setObjNameButton, 2,0);
+        add_dialog_layout->addWidget(addPinButton, 3,0);
+        add_dialog_layout->addWidget(removePinButton, 4,0);
+        add_dialog_layout->addWidget(addPropertyButton, 5,0);
+        add_dialog_layout->addWidget(addMultiStatePropertyButton, 6,0);
+        add_dialog_layout->addWidget(removePropertyButton, 7,0);
+        add_dialog_layout->addWidget(tablewidget1, 0,1, 8,1);
+        add_dialog_layout->addWidget(buttonbox, 8,0, 8,2);
+
+        edit_element_dialog->setLayout(add_dialog_layout);
+
+        switch(edit_element_dialog->exec()){
+        case 0:{
+
+        break;
+        }
+        case 1:{
+            _lib->remove_component(component_instance->objectName());
+            _lib->add_component(component_instance);
+            update_tableWidget(component_instance->objectName());
+        break;
+        }
+        default:
+            break;
+        }
+
         return;
     }
 //----------------------------------------------------------------------------
@@ -648,7 +976,7 @@ void LibEditor::addButton_addelement_clicked()
     QMessageBox* remove_messagebox1 = new QMessageBox(this);
 
     remove_messagebox1->setIcon(QMessageBox::Warning);
-    remove_messagebox1->setText("If you delete the component, you can't \nget back it anymore.Unless you create it again.");
+    remove_messagebox1->setText("If you delete property, you can't \nget back it anymore.Unless you create it again.");
     remove_messagebox1->setWindowTitle("Warning");
     remove_messagebox1->setCheckBox(new QCheckBox("Don't show again."));
     remove_messagebox1->addButton("Cancel", QMessageBox::RejectRole);

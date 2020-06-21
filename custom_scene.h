@@ -13,6 +13,7 @@ public:
     explicit Custom_scene(QObject *parent = 0);
     ~Custom_scene();
 
+
 public slots:
 
 private:

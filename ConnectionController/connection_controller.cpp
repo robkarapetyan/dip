@@ -56,10 +56,16 @@ void Connection_controller::receiving_pin(Pin *a)
             if(pin1->parentItem() == pin2->parentItem())
                 throw std::invalid_argument("cant attach pins of same parent");
 
+            for(auto i : vec_of_lines){
+                if((i->start == pin1 && i->end == pin2) || (i->end == pin1 && i->start == pin2) )
+                    return;
+            }
             if(mode == ConnectionMode::flat){
                 ILine* line = new FlatLine(pin1,pin2);
 
-                line->setLine(pin1->scenePos().rx(),pin1->scenePos().ry(), pin2->scenePos().rx(), pin2->scenePos().ry());
+
+                line->setLine(pin1->scenePos().rx() + pin1->rect().width()/2,pin1->scenePos().ry() + pin1->rect().height()/2,
+                              pin2->scenePos().rx() + pin1->rect().width()/2, pin2->scenePos().ry() + pin1->rect().height()/2);
                 pin1->add_line(line);
                 pin2->add_line(line);
 
@@ -69,7 +75,8 @@ void Connection_controller::receiving_pin(Pin *a)
                 ILine* line = new OrtogonalLine(pin1,pin2);
 
                 line->setPos(pin1->scenePos());
-                line->setLine(pin1->scenePos().rx(),pin1->scenePos().ry(), pin2->scenePos().rx(), pin2->scenePos().ry());
+                line->setLine(pin1->scenePos().rx() + pin1->rect().width()/2,pin1->scenePos().ry() + pin1->rect().height()/2,
+                              pin2->scenePos().rx() + pin1->rect().width()/2, pin2->scenePos().ry() + pin1->rect().height()/2);
                 pin1->add_line(line);
                 pin2->add_line(line);
 
@@ -117,7 +124,7 @@ void Connection_controller::receiving_pin(Pin *a)
 
 
         }
-    } catch (const std::invalid_argument& a) {
+    } catch (const std::invalid_argument& ) {
         QMessageBox* b = new QMessageBox;
         b->setIcon(QMessageBox::Critical);
         b->setText("Self attachment is not allowed");

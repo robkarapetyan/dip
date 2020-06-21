@@ -58,6 +58,20 @@ private slots:
 
     void on_actionopen_sp_file_triggered();
 
+    void on_actionaction_undo_triggered();
+
+    void on_actionaction_redo_triggered();
+
+    void on_actionOptions_triggered();
+
+    void on_actionPreferences_triggered();
+
+    void on_actiona1k_triggered();
+
+    void on_actionredo_triggered();
+
+    void on_actionFind_triggered();
+
 private:
 //    QAction* find_action(QAction*, const QString&);
     void update_component_menu();

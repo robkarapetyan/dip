@@ -25,12 +25,13 @@ public:
 //    void get_signatures();
 
     void setMode(const ConnectionMode &a);
+
+    QVector<Pin*> ports = {};
 public slots:
     void receiving_pin(Pin*);
 signals:
     void item_created(QGraphicsItem*);
 private:
-    QVector<Pin*> ports = {};
     QVector<QString> signatures = {};
     ConnectionMode mode= ConnectionMode::none;
     QVector<ILine*> vec_of_lines = {};

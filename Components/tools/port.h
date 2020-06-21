@@ -15,7 +15,9 @@ public:
     void setrect(qreal ax, qreal ay,qreal w, qreal h);
     QPointF scenePos() const;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 private:
+    QGraphicsSimpleTextItem* _signature = nullptr;
     Pin* m_pin = new Pin;
 signals:
     void pin_hover_signal(Pin *);

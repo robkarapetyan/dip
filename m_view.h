@@ -10,6 +10,7 @@
 #include "Components/resistor.h"
 #include "Components/tools/component.h"
 #include "ConnectionController/connection_controller.h"
+#include "Tools/ActionController/actioncontroller.h"
 
 enum class ActiveMode{none,component,port};
 
@@ -29,9 +30,12 @@ public:
     ActiveMode mode = ActiveMode::none;
 //    std::vector<Component*> vec_of_components_p = {};
     void set_to_(const ActiveMode& a);
-    Connection_controller* conncontroller;
+    Connection_controller* conncontroller = nullptr;
+    ActionController* actcontroller = nullptr;
+
 //    void setGrid_enabled(bool);
 
+    QMap<QString, QVector<QString>> names_map = {};
 signals:
     void scaling_sig(int new_val);
 
@@ -39,6 +43,8 @@ public slots:
     void add_received_lineItem(QGraphicsItem*);
     void change_scale(int new_scale);
     void component_received(Component *);
+
+    void remove_component_slot(Component*);
 private:
     int m_scaling = 100;
 //    QGraphicsItemGroup* gridgroup = nullptr;
