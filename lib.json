@@ -1,0 +1,314 @@
+{
+    "Headers": {
+        "active": {
+            "head": "analog",
+            "level": 1
+        },
+        "analog": {
+            "head": "none",
+            "level": 0
+        },
+        "and": {
+            "head": "gates",
+            "level": 2
+        },
+        "connections": {
+            "head": "analog",
+            "level": 1
+        },
+        "digital": {
+            "head": "none",
+            "level": 0
+        },
+        "gates": {
+            "head": "digital",
+            "level": 1
+        },
+        "nand": {
+            "head": "gates",
+            "level": 2
+        },
+        "nor": {
+            "head": "gates",
+            "level": 2
+        },
+        "or": {
+            "head": "gates",
+            "level": 2
+        },
+        "passive": {
+            "head": "analog",
+            "level": 1
+        },
+        "sources": {
+            "head": "analog",
+            "level": 1
+        },
+        "xnor": {
+            "head": "gates",
+            "level": 2
+        },
+        "xor": {
+            "head": "gates",
+            "level": 2
+        }
+    },
+    "capacitor": {
+        "icon": "://icons/caph.png",
+        "pins": [
+            23,
+            10,
+            -3,
+            10
+        ],
+        "properties": {
+            "capasitance": 0,
+            "head": "passive",
+            "name": "",
+            "pins": 2,
+            "rotation_angle": 0,
+            "spice_form": "'C' + name 0 1 capasitance"
+        },
+        "tri_states_properties": {
+            "capasitance_tri_state": [
+                "u",
+                "n",
+                "f"
+            ],
+            "capasitance_tri_state_active": "u"
+        }
+    },
+    "current source": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/current_Source.png",
+        "pins": [
+            21,
+            -4,
+            22,
+            47
+        ],
+        "properties": {
+            "PER": 0,
+            "PW": 0,
+            "TD": 0,
+            "TF": 0,
+            "TR": 0,
+            "VH": 0,
+            "VL": 0,
+            "head": "sources",
+            "pins": 2,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    },
+    "diode": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/dioh.png",
+        "pins": [
+            -5,
+            9,
+            23,
+            9
+        ],
+        "properties": {
+            "anode pin": 0,
+            "cathode pin": 0,
+            "head": "passive",
+            "pins": 2,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    },
+    "ground": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/gnd.png",
+        "pins": [
+            12,
+            -3
+        ],
+        "properties": {
+            "head": "connections",
+            "pin_signature": 0,
+            "pins": 1,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    },
+    "inductor": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/inductor.png",
+        "pins": [
+            -6,
+            13,
+            31,
+            14
+        ],
+        "properties": {
+            "head": "passive",
+            "inductance": 0,
+            "pins": 2,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    },
+    "npn": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/npn.png",
+        "pins": [
+            -5,
+            12,
+            21,
+            31,
+            22,
+            -6
+        ],
+        "properties": {
+            "head": "active",
+            "pin base": 0,
+            "pin collector": 0,
+            "pin emitter": 0,
+            "pins": 3,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    },
+    "pnp": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/pnp.png",
+        "pins": [
+            -5,
+            13,
+            22,
+            -5,
+            22,
+            31
+        ],
+        "properties": {
+            "head": "active",
+            "pin base": 0,
+            "pin collector": 0,
+            "pin emitter": 0,
+            "pins": 3,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    },
+    "resistor": {
+        "icon": "://icons/resh.ico",
+        "pins": [
+            23,
+            10,
+            -3,
+            10
+        ],
+        "properties": {
+            "head": "passive",
+            "name": "",
+            "pins": 2,
+            "resistance": 0,
+            "rotation_angle": 0,
+            "spice_form": "'R' + name 0 1 resistance"
+        },
+        "tri_states_properties": {
+            "resistance_tri_state": [
+                "",
+                "K",
+                "MEG"
+            ],
+            "resistance_tri_state_active": ""
+        }
+    },
+    "transformer": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/transfer.png",
+        "pins": [
+            1,
+            -5,
+            0,
+            26,
+            24,
+            -5,
+            23,
+            28
+        ],
+        "properties": {
+            "head": "passive",
+            "pin in minus": 0,
+            "pin in plus": 0,
+            "pin out minus": 0,
+            "pin out plus": 0,
+            "pins": 4,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    },
+    "voltage source": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/dc.png",
+        "pins": [
+            13,
+            32,
+            13,
+            -6
+        ],
+        "properties": {
+            "VDC": 0,
+            "head": "sources",
+            "pins": 2,
+            "rotation_angle": 0,
+            "spice_form": "'V' + name 1 0 VDC"
+        },
+        "tri_states_properties": {
+            "VDC_tri_state": [
+                "",
+                "K",
+                "MEG",
+                ""
+            ],
+            "VDC_tri_state_active": ""
+        }
+    },
+    "voltage source pulse": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/dc.png",
+        "pins": [
+            13,
+            32,
+            13,
+            -6
+        ],
+        "properties": {
+            "PER": 0,
+            "PHASE": 0,
+            "PW": 0,
+            "TD": 0,
+            "TF": 0,
+            "TR": 0,
+            "VDC": 0,
+            "VH": 0,
+            "VL": 0,
+            "head": "sources",
+            "pins": 2,
+            "rotation_angle": 0,
+            "spice_form": "'V' + name 0 1 'dc' VDC  'PULSE' '(' + VL VH TD TR TF PW PER PHASE + ')'"
+        },
+        "tri_states_properties": {
+        }
+    },
+    "zener": {
+        "icon": "C:/Users/Rob/Desktop/diplomayin/dip/icons/zener-diode.png",
+        "pins": [
+            -4,
+            13,
+            30,
+            13
+        ],
+        "properties": {
+            "anode pin": 0,
+            "cathode pin": 0,
+            "head": "passive",
+            "pins": 2,
+            "rotation_angle": 0
+        },
+        "tri_states_properties": {
+        }
+    }
+}
